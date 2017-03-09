@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>四天时间改了一行代码 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="talk is cheap">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="四天时间改了一行代码 | Sunny的四度空间">
+    <meta name="twitter:description" content="talk is cheap">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="四天时间改了一行代码 | Sunny的四度空间">
+    <meta property="og:description" content="talk is cheap">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/02/18/4dayscode/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/avatar.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">四天时间改了一行代码</h1>
+  </header>
+
+  <section class="post">
+    <p>最近手头分来了一个bug，该bug很诡吊，一行代码的改动，花了四天时间，因为该Bug会block出货，项目经理每天催问进度，期间真是感觉整个人都不好了。本篇博文记录解决该问题的坎坷历程，因为代码保密原则，技术细节不便详细给出，重点记录解决问题的过程。</p>
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>MTK平台双摄拍完的景深图片在Gallery内，能进行refocus（重聚焦）操作，Camera近期新增拍摄4：3比例的图片，refocus时该种比例的图片显示会拉伸，为了解决该问题，我对refocus后的图片进行了一个resize操作。之后就报出对该种图片进行refocus操作，非常高的概率出现点击两次才能正确改变图片焦点的bug。16：9的图片则没有该Bug。现象如图-1.</p>
+<p><center><img src="http://img.blog.csdn.net/20160908184612655" alt="这里写图片描述"></center></p>
+<p><center>图-1</center><br>而正常的现象应该点击哪里，哪里就清晰。如图-2.</p>
+<p><center><img src="http://img.blog.csdn.net/20160908185355066" alt="这里写图片描述"></center></p>
+<p><center>图-2</center></p>
+<h1 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h1><h2 id="Day-1：自我怀疑"><a href="#Day-1：自我怀疑" class="headerlink" title="Day-1：自我怀疑"></a>Day-1：自我怀疑</h2><p>问题是在我的修改之后才引发的，因此这个漏洞还得我来补，回退掉resize的改动，该问题确实消失了，但图片会被拉伸的问题当然又会出来，看来我得找其他方法修正图片拉伸的问题，此时项目经理发出邮件，强调该问题会block产品出货，让尽快处理。顶着压力开始撸一遍代码，梳理了下Refocus的大体过程：<br><img src="http://img.blog.csdn.net/20160908185914757" alt="这里写图片描述"><br>因为问题只出现在4：3比例的图片上，一开始就认为问题出在A过程中，猜测4：3比例的图片接收的touch坐标与图片上的坐标点没有正确对应。排查代码，发现底层算法逻辑是按16：9的图片比例处理景深数据,到此以为找到了root cause,连同图片会被拉伸的问题一并抛给平台，让他们去解。<br>    因为是平台提供的算法问题，而算法核心逻辑平台是以库文件release出来，我们无法修改。问题也抛给了平台，我这边没有压力，只用等平台提供修复patch过来合并就可。然而等待一段时间后，平台给了反馈，我之前为解决图片拉伸引入的resize patch修改方案是可行的，他们修正拉伸问题的改法与我的一样，重点是加上resize的patch该问题在平台的Gallery上没法复现，这无疑将问题抛回给了我。压力指数立马暴增十几个点，如果平台没有问题，那就只可能是我在porting平台gallery的时候出错了。这里说明下项目采用的gallery并不是基于平台Gallery开发的，只是将平台gallery上的refocus相关代码porting进来。如果porting过来的代码产生bug。就有两种可能：</p>
+<ul>
+<li>平台gallery问题</li>
+<li>porting过程中引入的问题</li>
+</ul>
+<p>真出问题了，当然希望是第一类问题，这样最起码还能求助平台，如果是porting不当引发的问题，平台顶多协助分析下，还得自己去一点点嚼回头草，现在如果平台没能复现问题，那么整个压力就又跑到我这边来了。<br>    于是赶紧更新平台的Gallery代码，安装后测试，我擦，明显能复现啊。这是怎么回事呢？又重新拿平台的gallery复测了几遍，确实平台gallery也有该问题。于是下班前再次把现象发邮件给平台，这时距离项目经理发出邮件已经过去了一天。</p>
+<blockquote>
+<p><strong>Day-1后记</strong><br>不够自信，浪费了很多时间复测平台gallery的现象，由于平台反馈他们加入resize patch都没能复现问题，因此就怀疑自己向平台加入resize的patch不正确，检查了好几遍代码，在加上编译安装测试，浪费了时间。过度的细心，浪费时间，拖慢了进度。</p>
+</blockquote>
+<h2 id="Day-2：逃避"><a href="#Day-2：逃避" class="headerlink" title="Day-2：逃避"></a>Day-2：逃避</h2><p>发送给平台的邮件得到回复，平台依然无法复现问题，问题陷入罗生门。我用平台的Gallery能复现问题，但平台却又无法复现。于是又梳理了几个可能导致结果不同的可疑点。</p>
+<ul>
+<li>复现问题的图片。因为refocus采用的图片依赖Camera拍摄，会不会平台复现问题时所用的图片和我们不一致导致的呢。邮件将我复现用的图片发送给平台方，得知依然无法复现。</li>
+<li>我加入的resize patch与平台不同。邮件将我的改动发送给平台方，经确认修改地方一致。</li>
+<li>porting时出错。邮件将porting过来的refocus相关文件发送给平台方，帮忙确认porting是否有问题，经确认porting无误。</li>
+<li>邮件发送log给平台，请其尝试从log排查是否有问题。自己和平台都未看出问题。</li>
+</ul>
+<p>问题至此感觉无法进展下去了，平台无法复现问题，也就没法给出解决方案。自己转向去解决其他bug。该问题处于搁置状态。这时距离项目经理发出邮件过去了两天。</p>
+<blockquote>
+<p><strong>Day-2后记</strong><br>1.沟通不畅，当自己这边复测后现象与平台方不一致，应该及时沟通，这一点在Day-3中通过项目经理的推动才加紧了沟通步伐。<br>2.没有从正面解决问题。一直围绕问题周边在排查，本来期望这样能快速定位问题，但没能第一时间再次详细梳理代码逻辑。<br>3.惰性产生。头疼的bug没有一点头绪后，产生懈怠心理。搁置的问题永远是问题，出现了要正面解决。</p>
+</blockquote>
+<h2 id="Day-3：找到原因"><a href="#Day-3：找到原因" class="headerlink" title="Day-3：找到原因"></a>Day-3：找到原因</h2><p>项目经理开始不断催促问题进度。但自己仍旧没有头绪，压力指数再次攀升。项目经理催促直接电话跟平台沟通，要加强push平台。自己通过其他渠道拿到平台电话，直接电话沟通。果然电话沟通后很有收获，知道了一种debug方法，能查看点击后通过算法逻辑生成的新Bitmap,赶紧本地debug，这时发现算法逻辑的图片是正常的，也就是图-1中的A步骤执行完成后，结果是正确的，问题出在B步骤上。总算有了明确的分析方向。<br>    A步骤完成后，refocusview将新生成的bitmap上图，跟平台方确认上图的逻辑调用是正确的。看着快要找到问题原因了，但还是进行不下去，相同的逻辑，运行的结果确不一样。诡吊的很。<br>    在次从touch事件开始梳理代码，由于refocus的父类封装在库文件里，这也给排查代码逻辑带来了复杂性。硬着头皮分析出OnTouch主要做了两件事：</p>
+<ol>
+<li>mRefocusListener.setRefocusImage(mDownRX, mDownRY)。通过接口回调的方式将touch坐标回传给Activity，Activity利用点击坐标生成新的焦点图。</li>
+<li>requestRender()。方法实现无法看到，从名字猜测像是GLSurfaceView里调用它来渲染图片，重聚焦的过程伴随一个过度动画，有可能就是通过它不断渲染做出来的效果。<br>心里大概对这个过程有个一个猜测图。<br><img src="http://img.blog.csdn.net/20160908190842058" alt="这里写图片描述"><br>继续与平台沟通，确认上述猜测正确。那这里就有个坑了，如果渲染动画结束后，生成的新图才被交给refocusview，那当然不会被更新上来。<br>如果上面的流程正确，已经大概猜测到为何添加resize的patch后就会出现该Bug。但还是无法解释为何平台一次都没有复现该问题。<br>突然想起来我们的手机是将大核关闭的，那么有可能机器性能不如平台方，导致生成新图的过程太长了。<br>赶紧实验。用命令：<blockquote>
+<p>adb shell cat  /proc/ppm/mode</p>
+</blockquote>
+</li>
+</ol>
+<p>查看到当前手机处于低功耗模式。<br><img src="http://img.blog.csdn.net/20160908191248349" alt="这里写图片描述"><br>用命令：</p>
+<blockquote>
+<p>echo Performance &gt; /proc/ppm/mode</p>
+</blockquote>
+<p>开启高性能模式。<br><img src="http://img.blog.csdn.net/20160908191327153" alt="这里写图片描述"><br>在复测问题，神奇的事情发生了，bug没有了，完美！<br>这时距离项目经理发出邮件过去了三天。</p>
+<h2 id="Day-4：改了一行代码"><a href="#Day-4：改了一行代码" class="headerlink" title="Day-4：改了一行代码"></a>Day-4：改了一行代码</h2><p>已经找到问题原因。之前的疑惑也有了合理的解释。</p>
+<ul>
+<li>为何平台没有复现问题？平台设备没有关闭大核，生成新图的过程很快，动画结束之前，新图已经成功传给refocusview。</li>
+<li>为什么加入resize操作问题就报出来了？resize对新图进行了缩放，这个过程耗时，导致动画完成后，新图才传给refocusview。</li>
+<li>为什么是4:3比例的图片才有这个问题？4:3图片大，生成新图的过程相对其他图片耗时长。</li>
+</ul>
+<p>那么有几个方面可以修复该问题。</p>
+<ul>
+<li>优化算法，缩短生成新图时间。这需要平台去改，难度大，推动也难。直接pass。</li>
+<li>更改refocusview刷新机制，就算动画结束前，新图没能生成，也应该提供二次刷新的机会。该改动较大，在出货阶段，万一引入新的bug，更头疼。但这应该是该问题最正确的解法。</li>
+<li>将gallery加入高性能白名单，需要Performance组协助配置。但因为这一个问题，将其配置进白名单，有点小提大作。</li>
+<li>动态配置CUP频率，在生成新图的过程中对CUP升频。</li>
+<li>偷机取巧，拉长动画时间。只需变更一个值，风险低。但没能从正面解决。</li>
+</ul>
+
+  </section>
+
+</article>
+<section class="read-more">
+     
+   
+  
+</section>
+
+            
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
