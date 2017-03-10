@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Java内存分配---堆与栈 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Java内存分配---堆与栈 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Java内存分配---堆与栈 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/02/18/Java_Heap_Stack/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Java知识/">Java知识</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Java内存分配---堆与栈</h1>
+  </header>
+
+  <section class="post">
+    <p>堆和栈的概念接触已久，也很容易让人似懂非懂。本文阐述它们的区别和作用。配合一个小例子，加深对其理解。</p>
+<h1 id="堆内存"><a href="#堆内存" class="headerlink" title="堆内存"></a>堆内存</h1><p>堆内存是在Java程序运行时分配的，它用来存放对象，对象也总是在堆中。GC的作用域也是在堆内存上，它回收那些空引用对象。堆上的对象可以被程序全局应用到。</p>
+<h1 id="栈内存"><a href="#栈内存" class="headerlink" title="栈内存"></a>栈内存</h1><p>栈内存是被执行线程所用的，它用来存放引用，这些引用指向堆内存上的对象。栈内存的分配依赖方法调用，当一个方法被调用到，此时一块内存区域就被分配，它用来存放方法内部声明的一些基本数据类型(int,boolean…)和指向堆内存的引用。方法一旦执行完毕，存放的内容也就被清空了。栈还有两个显著的特点：</p>
+<ul>
+<li>顺序。栈遵循后进先出的规则</li>
+<li>相对于堆内存，它被分配的空间很小。</li>
+</ul>
+<p>以上就介绍完了堆内存和栈内存，收工！</p>
+<p>等等,Linus说</p>
+<blockquote>
+<p>Talk is cheap. Show me the code</p>
+</blockquote>
+<h1 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h1><p>还是瞅瞅代码吧。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">package com.azhengye.test;</div><div class="line"></div><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Person yPerson = new Person(&quot;5&quot;);</div><div class="line">        Person oPerson = new Person(&quot;100&quot;);</div><div class="line"></div><div class="line">        swapAge(yPerson, oPerson);//能成功交换年龄吗？</div><div class="line">        System.out.println(&quot;yPerson.age=&quot; + yPerson.getAge());</div><div class="line">        System.out.println(&quot;oPerson.age=&quot; + oPerson.getAge());</div><div class="line"></div><div class="line">        changeAge(oPerson);//更改后的年龄是多少了？</div><div class="line">        System.out.println(&quot;oPerson.age=&quot; + oPerson.getAge());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void swapAge(Person p1, Person p2) &#123;</div><div class="line">        Person temp = p1;</div><div class="line">        p1 = p2;</div><div class="line">        p2 = temp;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void changeAge(Person person) &#123;</div><div class="line">        person.setAge(&quot;5&quot;);</div><div class="line">        person = new Person(&quot;30&quot;);</div><div class="line">        person.setAge(&quot;40&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static class Person &#123;</div><div class="line">        private String age;</div><div class="line"></div><div class="line">        public Person(String age) &#123;</div><div class="line">            this.age = age;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public String getAge() &#123;</div><div class="line">            return age;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public void setAge(String age) &#123;</div><div class="line">            this.age = age;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>＝＝＝＝＝＝＝＝＝＝我是答案分割线，先别往下看，自己想下结果＝＝＝＝＝＝＝＝＝＝<br><br><br><br><br><br><br><br><br><br><br>答案揭晓，我们看看运行结果。<br><img src="http://img.blog.csdn.net/20161129001550589" alt="这里写图片描述"><br>我们看到交换年龄没有成功，而更改年龄却成功了。<br>下面分析下这段简单代码执行时发生的故事。</p>
+<ol>
+<li>程序执行，JVM会把Test类加载到堆内存中，程序的入口在main方法，既然是方法，JVM就会创建出一个栈，然后将main方法压入栈中。</li>
+<li>main方法中创建了两个Person对象，这两个对象存放在堆内存上，JVM如何找到它们呢？这个时候就栈中创建了两个引用yPerson/oPerson分别指向堆上的Person对象。</li>
+<li>接着执行swapAge方法，在swapAge方法区域，创建temp引用交换p1和p2的指向，如果我们添加上log可以看到这个时候p1和p2可以交换成功。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private static void swapAge(Person p1, Person p2) &#123;</div><div class="line">        System.out.println(&quot;before: in swapAge p1 is yPerson p1.age=&quot; + p1.getAge());</div><div class="line">        System.out.println(&quot;before: in swapAge p2 is oPerson p2.age=&quot; + p2.getAge());</div><div class="line">        Person temp = p1;</div><div class="line">        p1 = p2;</div><div class="line">        p2 = temp;</div><div class="line">        System.out.println(&quot;after: in swapAge p1 is yPerson p1.age=&quot; + p1.getAge());</div><div class="line">        System.out.println(&quot;after: in swapAge p2 is oPerson p2.age=&quot; + p2.getAge());</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>看看结果：<br>    <img src="http://img.blog.csdn.net/20161129004426831" alt="这里写图片描述"></p>
+<ol>
+<li>swapAge方法执行完毕，关键的点来了，swapAge会被弹出栈，这也就意味着我们在swapAge方法内的交换操作也结束了。它不会在影响main方法区域的引用指向。</li>
+<li>swapAge弹出栈后，此时栈里只剩下main方法区域了，接着执行打印log的语句：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">System.out.println(&quot;yPerson.age=&quot; + yPerson.getAge());</div><div class="line">System.out.println(&quot;oPerson.age=&quot; + oPerson.getAge());</div></pre></td></tr></table></figure>
+<p>注意了这里的yPerson/oPerson都是在main方法区域分配的，swapAge方法区域已久随着出栈操作被释放掉了，因此swapAge方法的交换根本不会影响yPerson/oPerson的指向。所以呈现的结果就是交换失败。</p>
+<ol>
+<li>程序开始执行changeAge方法，同样的会为changeAge方法分配一块区域，并将该区域压入栈中。</li>
+<li>changeAge方法接收的是一个指向Person(“100”)的引用，person.setAge(“5”)执行后，这时Person(“100”)这个在堆上的对象改变了，其age值变成了”5”。</li>
+<li>接着执行<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">person = new Person(&quot;30&quot;);</div><div class="line">person.setAge(&quot;40&quot;);</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>person先是重新被指向了堆内存上新生成的对象Person(“30”)，接着对该对象age做更改，将其改为”40”。</p>
+<ol>
+<li>changeAge方法执行完毕，同样被弹出栈，随着出栈操作，changeAge方法里创建的新对象Person(“30”)就没有引用指向它了，在GC运行时就可能会被回收掉。当前栈里又只剩下了main方法区域。这个时候打印oPerson的对象age值，oPerson在main方法区域的指向一直没有被修改，但在changeAge方法执行时改变了oPerson所指向对象的值，因此oPerson.age值变成了”5”。</li>
+<li>最后程序执行完毕main方法区域也被出栈，栈空间被释放，堆空间的对象也没有引用指向它们，同样被释放掉。程序到此结束。</li>
+</ol>
+<p>上述过程中changeAge方法执行时的内存示意图如下。<br><img src="http://img.blog.csdn.net/20161129225621182" alt="这里写图片描述"></p>
+<h1 id="Stack和Heap区别"><a href="#Stack和Heap区别" class="headerlink" title="Stack和Heap区别"></a>Stack和Heap区别</h1><p>结合以上示例，最后总结下Stack和Heap的区别。</p>
+<ul>
+<li>堆内存可以被整个程序访问到，而栈内存在执行时分配，只能被执行线程访问到。</li>
+<li>对象在堆内存上分配，指向对象的引用在栈内存上，同时基础数据类型也是存放在栈内存。</li>
+<li>栈内存分配内存块遵循后进先出原则，且所占空间小。堆内存上对象存放更复杂，有可能被分配到新生域(Young-Generation)或者年老域(Old-Generation)上。</li>
+<li>栈内存上的分配的空间生命周期很短，方法执行完毕就不释放掉。</li>
+<li>可以用-Xms 和 -Xmx等设置项配置堆内存大小。可以用-Xss配置栈内存大小。</li>
+<li>栈内存溢出会抛出ava.lang.StackOverFlowError 。堆内存溢出则会抛出java.lang.OutOfMemoryError。</li>
+</ul>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/02/18/4dayscode/" title="四天时间改了一行代码">四天时间改了一行代码</a></h2>
+                <p class="excerpt">
+                
+                最近手头分来了一个bug，该bug很诡吊，一行代码的改动，花了四天时间，因为该Bug会block出货，项目经理每天催问进度，期间真是感觉整个人都不好了。本篇博文记录解决该问题的坎坷历程，因为代码保密原则，技术细节不便详细给出，重点记录解决问题的过程。
+问题描述MTK平台双摄拍完的景深图片在Galle
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/02/18/4dayscode/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+        
+     
+   
+   
+  
+</section>
+
+            
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
