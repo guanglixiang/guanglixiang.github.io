@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android 性能优化之应用启动 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android 性能优化之应用启动 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android 性能优化之应用启动 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/03/18/Android_app_launch_perf/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-03-18T14:55:08.000Z" class="post-list__meta--date date">2017-03-18</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android 性能优化之应用启动</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>最近工作转到Android 性能优化方向，刚转过来，相关经验缺乏，纪录一个目前让人恼火的问题。非常遗憾，本文到目前为止还未能提供解决问题的优化方案，也没有明确定位到导致性能问题的瓶颈所在。就像解数学题一样，花费了大把时间，然并卵。之所以写它，两个目的：</p>
+<ul>
+<li>这个过程中，自己还是有一定收获的，且做纪录。</li>
+<li>抛出问题，希望能与更多人一起讨论性能优化的方法。</li>
+</ul>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>冷启动email应用相对于参考机慢。<br>参考机OS: AndroidM<br>问题机OS: AndroidN<br>参考机平均耗时：1.7s<br>问题机平均耗时：2.0s</p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="Email应用版本自身的影响"><a href="#Email应用版本自身的影响" class="headerlink" title="Email应用版本自身的影响"></a>Email应用版本自身的影响</h3><p>先查看email版本是否相同，使用命令: </p>
+<blockquote>
+<p>adb shell dumpsys package com.tct.email|grep version</p>
+</blockquote>
+<p>得到问题机email版本—&gt; versionName=v7.0.4.1.0312.0_0228<br>参考机email版本—&gt; versionName=v5.2.10.3.0214.0<br>参考机与对比机email版本不同.因平台Email应用与Exchange应用联系紧密，一并查看Exchange版本。<br>问题机exchange版本—&gt; versionName=v7.0.4.1.0312.0_0228<br>参考机exchange版本—&gt;versionName=v5.2.10.3.0214.0</p>
+<p>使用用命令：</p>
+<blockquote>
+<p>adb shell am start -W -S com.tct.email/.activity.Welcome</p>
+</blockquote>
+<p>查看Email的启动时间<br>为了方便统计，编写一个简单的脚本封装上述命令。脚本简短，在此贴出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="string">'''</span></div><div class="line">@author: guanglixiang@gmail.com</div><div class="line">@summary: this script use to test launch activity time</div><div class="line">'''</div><div class="line"></div><div class="line"><span class="keyword">from</span> commands <span class="keyword">import</span> getoutput</div><div class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep</div><div class="line"><span class="keyword">from</span> __builtin__ <span class="keyword">import</span> int</div><div class="line"></div><div class="line">LAUNCH_PACKAGE = <span class="string">'com.tct.email'</span></div><div class="line">LAUNCH_ACTIVITY = <span class="string">'com.tct.email/.activity.Welcome'</span></div><div class="line">TEST_COUNT = <span class="number">5</span> ＃测试次数</div><div class="line">SLEEP_TIME = <span class="number">10</span> <span class="comment">#每次启动的时间间隔</span></div><div class="line"></div><div class="line">LOG_LINE = <span class="string">"**************************************************"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">getVerInfo</span><span class="params">()</span>:</span></div><div class="line">    getVerCmd = <span class="string">"adb shell dumpsys package %s | grep version"</span> % (LAUNCH_PACKAGE)</div><div class="line">    verinfo = getoutput(getVerCmd)</div><div class="line">    <span class="keyword">print</span> LOG_LINE</div><div class="line">    <span class="keyword">print</span> <span class="string">"Test APK version info is:"</span></div><div class="line">    <span class="keyword">print</span> verinfo.strip()</div><div class="line">    <span class="keyword">print</span> LOG_LINE</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">getLaunchTime</span><span class="params">()</span>:</span></div><div class="line">    getLaunchTimeCmd = <span class="string">"adb shell am start -W -S %s |grep TotalTime|awk '&#123;print $2&#125;'"</span> % (LAUNCH_ACTIVITY)</div><div class="line">    totalTime = <span class="number">0</span></div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, TEST_COUNT + <span class="number">1</span>):</div><div class="line">        time = getoutput(getLaunchTimeCmd)</div><div class="line">        <span class="keyword">print</span> <span class="string">"%s lunch time is %s"</span> % (i, time)</div><div class="line">        totalTime += int(time)</div><div class="line">        <span class="keyword">if</span> (i &lt; TEST_COUNT):</div><div class="line">            sleep(SLEEP_TIME)</div><div class="line">        i = i + <span class="number">1</span></div><div class="line">    average = totalTime / TEST_COUNT</div><div class="line">    <span class="keyword">print</span> <span class="string">"%s launch time average is %s"</span> % (TEST_COUNT, average)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    getVerInfo()</div><div class="line">    getLaunchTime()</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    main()</div></pre></td></tr></table></figure>
+<p>其输出结果如下：</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="http://upload-images.jianshu.io/upload_images/2912789-42c644f7a00a7d9d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="脚本运行结果图"></h2><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">问题机</th>
+<th style="text-align:center">参考机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">750</td>
+<td style="text-align:center">674</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">782</td>
+<td style="text-align:center">649</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">770</td>
+<td style="text-align:center">649</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">754</td>
+<td style="text-align:center">633</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">781</td>
+<td style="text-align:center">671</td>
+</tr>
+</tbody>
+</table>
+<p>从结果看对比机明显好于问题机，那么这种差异是否由apk自身版本不一致导致呢?<br>为了回答这个问题，将问题机的emal安装到参考机再次测试。<br>使用命令：</p>
+<blockquote>
+<p>adb shell pm path com.tct.email</p>
+</blockquote>
+<p>找到email的apk路径<br>使用命令：</p>
+<blockquote>
+<p>adb pull /system/app/Email/Email.apk</p>
+</blockquote>
+<p>将问题机的Email拉出来。<br>使用命令：</p>
+<blockquote>
+<p>adb install -r Email.apk</p>
+</blockquote>
+<p>将刚拉出来的Email安装至参考机,此时再次测试得到如下表格:</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">问题机</th>
+<th style="text-align:center">参考机</th>
+<th style="text-align:center">参考机+问题机的Email</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">750</td>
+<td style="text-align:center">674</td>
+<td style="text-align:center">783</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">782</td>
+<td style="text-align:center">649</td>
+<td style="text-align:center">785</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">770</td>
+<td style="text-align:center">649</td>
+<td style="text-align:center">783</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">754</td>
+<td style="text-align:center">633</td>
+<td style="text-align:center">801</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">781</td>
+<td style="text-align:center">671</td>
+<td style="text-align:center">777</td>
+</tr>
+<tr>
+<td style="text-align:center">均值</td>
+<td style="text-align:center">767</td>
+<td style="text-align:center">655</td>
+<td style="text-align:center">786</td>
+</tr>
+</tbody>
+</table>
+<p>为了直观表述，根据上述数据生成柱状图如下：<br><img src="http://upload-images.jianshu.io/upload_images/2912789-f4ad7f17bbea0438.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="对比图"><br>从上述柱状图看Email应用的版本对最终测试数据的影响很大，本以为可以确定是APK版本差异导致的问题，然而最后测试“问题机＋参考机Email”的组合发现启动依然慢，数据没有整理，就不贴出来了。</p>
+<p>由于无法确定是APK版本差异导致的问题，因此该问题就划归在平台侧分析。</p>
+<h3 id="平台影响"><a href="#平台影响" class="headerlink" title="平台影响"></a>平台影响</h3><h2 id="cpu差异"><a href="#cpu差异" class="headerlink" title="cpu差异"></a>cpu差异</h2><p>通过命令：</p>
+<blockquote>
+<p>adb shell getprop ro.product.cpu.abi</p>
+</blockquote>
+<p>可以看系统是32还是64位<br>问题机：armeabi-v7a,armeabi<br>参考机：armeabi-v7a<br>通过命令：</p>
+<blockquote>
+<p>adb shell cat /proc/cpuinfo</p>
+</blockquote>
+<p>查看cpu信息，二者cup一样均为4核：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Hardware	: Qualcomm Technologies, Inc MSM8909</div><div class="line">Revision	: 0000</div><div class="line">Serial		: 0000000000000000</div><div class="line">Processor	: ARMv7 Processor rev 5 (v7l)</div></pre></td></tr></table></figure>
+<p>排除CPU影响。</p>
+<h2 id="内存差异："><a href="#内存差异：" class="headerlink" title="内存差异："></a>内存差异：</h2><p>通过命令：</p>
+<blockquote>
+<p>adb shell getprop dalvik.vm.heapstartsize</p>
+</blockquote>
+<p>查看系统分配给应用冷启动的初始堆空间<br>问题机：16m<br>参考机：8m<br>排除该项。<br>通过命令：</p>
+<blockquote>
+<p>adb shell cat /proc/meminfo</p>
+</blockquote>
+<p>查看系统总体的内存设置情况，得到下图：<br><img src="http://upload-images.jianshu.io/upload_images/2912789-c950069e5a3434fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="内存设置对比图"></p>
+<p>利用excel生成柱状图直观的看看各项值的差异,内容较多，只截取差异最大的一部分。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-b38184b40337c4a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="内存差异项"></p>
+<p>可以很直观的看到参考机和问题机上Committed_AS差异较大，其他各项二者相当，问题机都略高于参考机。尤其总内存大小问题机还比参考机高。好多项的具体含义我也不清楚，直观感觉差异项最大的最可能包含着潜在的问题。<br>那么这个 Committed_AS是表征什么的呢？</p>
+<blockquote>
+<p>原来Committed_AS 表示所有进程已经申请的内存总大小，（注意是已经申请的，不是已经分配的），如果 Committed_AS 超&gt;过 CommitLimit 就表示发生了 overcommit，超出越多表示 overcommit 越严重。Committed_AS 的含义换一种说法就是，如果要绝对保证不发生OOM (out of memory) 需要多少物理内存。<br>在打个比方，餐馆有10张餐桌，假设1张餐桌只能接纳1组客人。那么一下来了100组客人，Committed_AS的含义餐馆至少需要100张餐桌才能保证这些客人都能及时用餐。透过它能看到餐馆的忙碌程度。</p>
+</blockquote>
+<p>因为问题机的MemTot是大于参考机的，因此该项的差异不太可能是平台侧影响性能的主因，故而排除。</p>
+<p>通过命令</p>
+<blockquote>
+<p>adb shell getprop|grep dalvik</p>
+</blockquote>
+<p>查看问题机dalvik默认配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[dalvik.vm.appimageformat]: [lz4]</div><div class="line">[dalvik.vm.dex2oat-Xms]: [128m]</div><div class="line">[dalvik.vm.dex2oat-Xmx]: [512m]</div><div class="line">[dalvik.vm.heapgrowthlimit]: [128m]</div><div class="line">[dalvik.vm.heapmaxfree]: [8m]</div><div class="line">[dalvik.vm.heapminfree]: [512k]</div><div class="line">[dalvik.vm.heapsize]: [256m]</div><div class="line">[dalvik.vm.heapstartsize]: [32m]</div><div class="line">[dalvik.vm.heaptargetutilization]: [0.75]</div><div class="line">[dalvik.vm.image-dex2oat-Xms]: [128m]</div><div class="line">[dalvik.vm.image-dex2oat-Xmx]: [128m]</div><div class="line">[dalvik.vm.isa.arm.features]: [default]</div><div class="line">[dalvik.vm.isa.arm.variant]: [cortex-a7]</div><div class="line">[dalvik.vm.stack-trace-file]: [/data/anr/traces.txt]</div><div class="line">[dalvik.vm.usejit]: [false]</div><div class="line">[dalvik.vm.usejitprofiles]: [false]</div><div class="line">[dalvik.vm.zygotemaxfailedboots]: [5]</div><div class="line">[persist.sys.dalvik.vm.lib.2]: [libart.so]</div><div class="line">[ro.dalvik.vm.native.bridge]: [0</div></pre></td></tr></table></figure></p>
+<p>这里各项默认值跟参考机相比也没发现异常。<br>猜测因内存差异导致的问题到这一步未找到有效证据。</p>
+<h2 id="I-O-读写速度差异"><a href="#I-O-读写速度差异" class="headerlink" title="I/O 读写速度差异"></a>I/O 读写速度差异</h2><p>利用命令 </p>
+<blockquote>
+<p>adb shell vmstat -n 1</p>
+</blockquote>
+<p>查看Email启动瞬间系统层的变化。得到如下输出。关于vmstat的信息，可以<a href="https://www.thomas-krenn.com/en/wiki/Linux_Performance_Measurements_using_vmstat" target="_blank" rel="external">点击这里</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">===================================问题机=====================================</div><div class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----</div><div class="line">r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa</div><div class="line">0  0      0 269536  70424 1009964   0    0     0     0    0  388  1  1 99  0</div><div class="line">*2  0      0 271228  70432 1009956   0    0     0   104    0 2653 14 17 68  0</div><div class="line">*6  0      0 252056  70444 1010004   0    0     0   160    0 8102 35 23 42  0</div><div class="line">0  0      0 248168  70444 1010004   0    0     0     0    0 2487 11  3 86  0</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">===================================参考机=====================================</div><div class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----</div><div class="line">r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa</div><div class="line">0  0  29596  89580  55240 781332    0    0     0     0    0  829  2  2 97  0</div><div class="line">*6  0  29596  90784  55268 781304    0    0     0   800    0 4580  0  0  0  0</div><div class="line">*1  0  29596  74996  55268 781316    0    0     0   128    0 5332 33 12 55  0</div><div class="line">0  0  29596  76220  55268 781368    0    0     0     0    0 2118  0  0 100 0</div></pre></td></tr></table></figure>
+<p>以上输出开头加*的行是启动Email时对应的变化(*是为了方便描述，自行添加的)。<br>下面来挨个过一遍。<br>procs栏里的r(running),它表示运行队列中的进程数，即多少个进程分配到了CPU. 二者相差不大，看不出问题。<br>b(blocked) 被阻塞的进程数，二者均为0，表示没有进程被阻塞。<br>memory栏里的swpd。<br>特意在<a href="http://www.linuxquestions.org/questions/linux-general-1/vmstat-shows-swpd-as-0-a-300148/" target="_blank" rel="external">linux论坛</a>查了下其含义，看看其中某段解释：</p>
+<blockquote>
+<p>Note that a swap usage rate of zero is highly desirable because it means that your existing RAM can handle the load that’s being put on it without resorting to writing memory pages to disk. In other words, anytime your system has to access swap, you will be taking a <em>huge</em> performance hit – access times in RAM are measured in nanoseconds; access times on hard drives are measured in milliseconds. That’s about 6 orders of magnitude worse, and you should avoid it if at all possible.<br>To say it another way, Linux treats swap space as a resource of last resort. If the demands you are putting on your machine are such that RAM is overloaded and cannot handle it, then your system will write out memory pages to disk, but as mentioned this is only done when RAM is entirely overloaded. Back in the days were 64Mg was considered leading edge, it was pretty common for swap to be called into service, but these days, where 256Mg if not 512Mg of RAM is standard, it’s increasingly infrequent that swap gets used.<br>Overall, I’d consider zero swap usage to be a compliment to how you’ve set up your system. That being said, reserving some swap space (256Mg max, regardless of the RAM) is a useful thing, just in case. – J.W.</p>
+</blockquote>
+<p>swpd表示已经使用的虚拟内存大小. 如果大于0，表示手机物理内存不足,需要将部分内存内容转移到磁盘上。如果不是应用内存泄漏的原因，就是当前后台执行的任务过多了。问题机为0，这个是个好的现象，说明问题机至少不存在内存吃紧的情况。</p>
+<p>memory栏里的free表示空闲内存大小，同样问题机大于参考机，这也是好现象。<br>memory栏里的buff/cache两台机器也没有异常值排除。</p>
+<p>swap栏里的si,表示每秒从磁盘(disk)读入的内存大小(/s). 如果这个值大于0，表示物理内存不足或者内存泄漏，需要查找耗内存的进程。<br>swap栏里的so,表示每秒从内存写入磁盘的内存大小，他的数据不为0，表示当前内存不够用，需要将部分内存的内容腾出来到磁盘空间。<br>上述两项值在问题机和参考机上都为0.说明这里不是问题所在，故而排除。</p>
+<p>io栏里的bi表示手机里块设备每秒接收的块数量，对应写操作。而bo正好相反表示每秒发送的块数量，对应读操作。这里看到bi均为0，表示问题机和参考机在启动Email的阶段都没有写入操作，但bo值参考机明显大于问题机。这里可能是个问题，想象这样一个场景，启动Email时需要读取执行的code段，而问题机一次读取的code段少于参考机，那么相应的问题机在这段时间可执行的code段也就少于参考机,进而有可能影响最终的启动速度。<br>为了验证该猜想，调整I/O读写速度在来看该问题。<br>使用命令：</p>
+<blockquote>
+<p>adb shell echo 1024 &gt; /sys/block/mmcblk0/queue/max_sectors_kb</p>
+</blockquote>
+<p>将max_sectors_kb扩大一倍，之前是512. max_sectors_kb值代表发送到磁盘的请求数。然而结果依然没有提升。想不通为何。</p>
+<p>system栏里的in(interrupts) 表示在delay的时间内（默认为1秒）系统产生的中断数，二者均为0，排除<br>system栏里的cs (context switch) 表示在delay的时间内（默认为1秒）系统上下文切换的次数. 例如进程切换，要进行上下文切换；线程的切换，要进行上下文切，代码执行进入内核空间，上下文也要切换。这个值越小越好，太大了要考虑降低线程或者进程数目。因为上下文切换很耗资源，次数过多表示CPU大部分浪费在上下文切换而不是执行程序内容，CPU没有充分利用。该项数据参考机是好于问题机的。</p>
+<p>cpu栏里的us表示用户空间执行任务所占CPU的时间百分比。看不出问题排除。<br>cpu栏里的sy表示kernel空间执行任务占用的CPU时间比 ， 如果太高，表示系统调用时间过长，例如IO操作频繁。这里问题机明显高于参考机，提示存在问题。<br>cpu栏里的id表示空闲CPU占用的时间比。一般来说，id + us + sy 接近 100%<br>cpu栏里的wa表示CPU等待IO完成的时间占比，该值若大，对系统的流程性冲击大。问题机和参考机都为0，看不出问题。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>问题还在持续分析中，如果看到这篇文章的你，有什么好的排查方向，或者排查方法，欢迎一起讨论。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/02/18/4dayscode/" title="四天时间改了一行代码">四天时间改了一行代码</a></h2>
+                <p class="excerpt">
+                
+                最近手头分来了一个bug，该bug很诡吊，一行代码的改动，花了四天时间，因为该Bug会block出货，项目经理每天催问进度，期间真是感觉整个人都不好了。本篇博文记录解决该问题的坎坷历程，因为代码保密原则，技术细节不便详细给出，重点记录解决问题的过程。
+问题描述MTK平台双摄拍完的景深图片在Galle
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/02/18/4dayscode/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
