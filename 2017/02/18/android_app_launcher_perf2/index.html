@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android 平台侧性能优化之应用启动[问题已解决] | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android 平台侧性能优化之应用启动[问题已解决] | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android 平台侧性能优化之应用启动[问题已解决] | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/02/18/android_app_launcher_perf2/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android 平台侧性能优化之应用启动[问题已解决]</h1>
+  </header>
+
+  <section class="post">
+    <p>上一篇文章<a href="https://guanglixiang.github.io/2017/03/18/Android_app_launch_perf/" target="_blank" rel="external">Android 平台侧性能优化之应用启动</a>采用多个命令分析了平台的cpu/memory等方面对Email启动慢照成的影响。很遗憾花了许多精力，但依然没有找出问题所在，这个坑终于填平了。手动撒花^_^<br>回头看来，问题其实很简单，一开始走错方向，导致花了许多精力，不过这个过程也同样积累了不少知识。<br>本篇文章记录填坑的过程，重新换个角度分析。</p>
+<h1 id="曙光出现："><a href="#曙光出现：" class="headerlink" title="曙光出现："></a>曙光出现：</h1><p>同事在分析另外一个I/O读取慢的问题时发现我们的设备是被加密的，得知这个消息后，我的内心是激动的。一度以为找到了问题的root cause.</p>
+<blockquote>
+<p>adb shell getprop ro.crypto.state</p>
+</blockquote>
+<p>用上述命令查看问题机的加密状态，返回encrypted，果然是已经默认加密了。感觉曙光出现了，我们的设备加密时将/data分区也进行了加密，而应用启动的文件正是放在/data分区下的。按理来讲加密后的/data分区读写速度肯定弱于未加密状态。问题会不会跟此相关呢？<br>我们采用的是高通8909平台芯片，找到对应的fstab.qcom文件。修改如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">- /dev/block/bootdevice/by-name/userdata       /data        ext4    nosuid,nodev,barrier=1,noauto_da_alloc,discard      wait,check,forceencrypt=footer</div><div class="line">+ /dev/block/bootdevice/by-name/userdata       /data        ext4    nosuid,nodev,barrier=1,noauto_da_alloc,discard      wait,check,encryptable=footer</div></pre></td></tr></table></figure></p>
+<p>关键就是修改这一句forceencrypt=footer===&gt;encryptable=footer<br>forceencrypt表示强制加密，我们改成encryptable意味着加密是让用户主动去选择的。</p>
+<p>怀着胸有成竹的心情验证修改后的版本。发现根本没有起任何作用。whats’s the fuck!说不过去啊。<br>满以为找到突破口了，结果希望的火焰还是被无情的浇灭了。</p>
+<h1 id="还是IO速度"><a href="#还是IO速度" class="headerlink" title="还是IO速度"></a>还是IO速度</h1><p>自己写了一个test apk，专门测试平台emcc的读写速度。测试问题机Log如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">03-24 20:05:52.126 30578 30727 D Sunny-Test: start call writeData---&gt;</div><div class="line">03-24 20:05:52.144 30578 30727 D Sunny-Test-Utils: befWriteTime=93676689579157</div><div class="line">03-24 20:05:52.144 30578 30727 D Sunny-Test-Utils: NewBufTime use time---&gt;392292</div><div class="line">03-24 20:06:12.656 30578 30727 D Sunny-Test-Utils: initBufData use time---&gt;20512314888</div><div class="line">03-24 20:06:12.656 30578 30727 D Sunny-Test-Utils: total create BufData use time---&gt;20512707180</div><div class="line">03-24 20:06:12.695 30578 30727 D Sunny-Test-Utils: aftWriteTime=93697240995816</div><div class="line">03-24 20:06:12.695 30578 30727 D Sunny-Test-Utils: delta=20551416659</div><div class="line">03-24 20:06:12.696 30578 30727 D Sunny-Test: start call writeData---&gt;</div><div class="line">03-24 20:06:12.710 30578 30727 D Sunny-Test-Utils: befWriteTime=93697255657795</div><div class="line">03-24 20:06:12.710 30578 30727 D Sunny-Test-Utils: NewBufTime use time---&gt;551198</div><div class="line">03-24 20:06:33.188 30578 30727 D Sunny-Test-Utils: initBufData use time---&gt;20477974992</div><div class="line">03-24 20:06:33.188 30578 30727 D Sunny-Test-Utils: total create BufData use time---&gt;20478526190</div><div class="line">03-24 20:06:33.227 30578 30727 D Sunny-Test-Utils: aftWriteTime=93717772564923</div><div class="line">03-24 20:06:33.227 30578 30727 D Sunny-Test-Utils: delta=20516907128</div></pre></td></tr></table></figure>
+<p>在测试参考机Log如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">03-24 06:03:42.766 18541 18576 D Sunny-Test: start call writeData---&gt;</div><div class="line">03-24 06:03:42.780 18541 18576 D Sunny-Test-Utils: befWriteTime=7136372545141</div><div class="line">03-24 06:03:42.787 18541 18576 D Sunny-Test-Utils: NewBufTime use time---&gt;6635938</div><div class="line">03-24 06:03:45.272 18541 18576 D Sunny-Test-Utils: initBufData use time---&gt;2485714686</div><div class="line">03-24 06:03:45.272 18541 18576 D Sunny-Test-Utils: total create BufData use time---&gt;2492350624</div><div class="line">03-24 06:03:45.359 18541 18576 D Sunny-Test-Utils: aftWriteTime=7138951725036</div><div class="line">03-24 06:03:45.359 18541 18576 D Sunny-Test-Utils: delta=2579179895</div><div class="line">03-24 06:03:45.360 18541 18576 D Sunny-Test: start call writeData---&gt;</div><div class="line">03-24 06:03:45.371 18541 18576 D Sunny-Test-Utils: befWriteTime=7138963657484</div><div class="line">03-24 06:03:45.371 18541 18576 D Sunny-Test-Utils: NewBufTime use time---&gt;387188</div><div class="line">03-24 06:03:47.898 18541 18576 D Sunny-Test-Utils: initBufData use time---&gt;2526351301</div><div class="line">03-24 06:03:47.898 18541 18576 D Sunny-Test-Utils: total create BufData use time---&gt;2526738489</div><div class="line">03-24 06:03:47.983 18541 18576 D Sunny-Test-Utils: aftWriteTime=7141575492639</div><div class="line">03-24 06:03:47.983 18541 18576 D Sunny-Test-Utils: delta=2611835155</div></pre></td></tr></table></figure>
+<p>可以看到<br>问题机写入耗时：Sunny-Test-Utils: delta=20516907128<br>参考机写入耗时：Sunny-Test-Utils: delta=2611835155<br>参考机比问题机写入速度快了一个数量级。再用其他的工具测试I/O读写速度，同样发现参考机比问题机快。但知道这个还是没有办法解决问题，也没法量化I/O差异到底会对Email的启动速度影响多大。<br>问题到这一度陷入窘境，迷失了分析方向。是时候祭出systrace工具了。</p>
+<h1 id="插播-systrace-使用简介"><a href="#插播-systrace-使用简介" class="headerlink" title="插播 systrace 使用简介"></a>插播 systrace 使用简介</h1><p>systrace位于<sdk>/platform-tools/systrace目录下。<br>我们主要分析Email的性能问题，因此可以用命令：</sdk></p>
+<blockquote>
+<p>python systrace.py –app=com.tct.email gfx view sched dalvik -o email_launch.html</p>
+</blockquote>
+<p>来抓取trace log分析启动过程。systrace 支持的trace类型可以通过:</p>
+<blockquote>
+<p>python systrace.py -l</p>
+</blockquote>
+<p>查看，用Android N下的systrace工具输出结果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-3afae5416e5ab6b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="systrace.py -l 输出结果"></p>
+<p>输入上述命令，然后启动Email，待主界面展示出来后，根据提示输入回车键，此时systrace工具开始生成报告。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-ed64ef4af63d6415.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="生成systrace过程"></p>
+<blockquote>
+<p>Tips:<br>systrace.py位于SDK/platform-tools/systrace目录下。抓取时最好用系统对应的SDK工具抓取。同时如果有源码，也可以用源码的external/chromium-trace/catapult/systrace/systrace/systrace.py 抓取。同样注意抓取systrace的手机跟源码版本一直。</p>
+</blockquote>
+<p>然后打开chrome，在地址栏里输入</p>
+<blockquote>
+<p>chrome://tracing/</p>
+</blockquote>
+<p> <img src="http://upload-images.jianshu.io/upload_images/2912789-0fd8ff6b8340aac6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="load systrace界面"></p>
+<p> 点击Load 按钮，载入email_launch.html文件。显示入下图：</p>
+<p> <img src="http://upload-images.jianshu.io/upload_images/2912789-81f907f21e4b88d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="systrace 主界面"></p>
+<p> 查看systrace主要用到4个快捷键：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">W</th>
+<th style="text-align:center">放大视图</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">S</td>
+<td style="text-align:center">缩小视图</td>
+</tr>
+<tr>
+<td style="text-align:center">A</td>
+<td style="text-align:center">右移视图</td>
+</tr>
+<tr>
+<td style="text-align:center">D</td>
+<td style="text-align:center">左移视图</td>
+</tr>
+</tbody>
+</table>
+<h1 id="systrace-报告分析"><a href="#systrace-报告分析" class="headerlink" title="systrace 报告分析"></a>systrace 报告分析</h1><p> 为了排除apk版本差异的干扰，将同版本的apk分别安装到问题机跟参考机上。然后对比systrace报告。<br> 先用TestActivityLaunchTime.py测试问题机以及参考机的启动时间。脚本获取地址：<a href="https://github.com/guanglixiang/Android_Performance/blob/master/TestActivityLaunchTime.py" target="_blank" rel="external">https://github.com/guanglixiang/Android_Performance/blob/master/TestActivityLaunchTime.py</a><br> 问题机：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">**************************************************</div><div class="line">Test APK version info is:</div><div class="line">versionCode=317022801 minSdk=17 targetSdk=24</div><div class="line">    versionName=v7.0.4.1.0312.0_0228</div><div class="line">    **************************************************</div><div class="line">    1 lunch time is 875</div><div class="line">    2 lunch time is 884</div><div class="line">    3 lunch time is 897</div><div class="line">    4 lunch time is 873</div><div class="line">    5 lunch time is 862</div><div class="line">    5 launch time average is 878</div></pre></td></tr></table></figure>
+<p>参考机：</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">  **************************************************</div><div class="line">  Test APK version info is:</div><div class="line">  versionCode=317022801 targetSdk=24</div><div class="line">      versionName=v7.0.4.1.0312.0_0228</div><div class="line">   versionCode=216030401 targetSdk=23</div><div class="line">       versionName=v5.2.10.3.0214.0</div><div class="line">**************************************************</div><div class="line">1 lunch time is 806</div><div class="line">2 lunch time is 773</div><div class="line">3 lunch time is 782</div><div class="line">4 lunch time is 777</div><div class="line">5 lunch time is 835</div><div class="line">5 launch time average is 794</div></pre></td></tr></table></figure>
+</code></pre><p>这里看差距貌似不大，但多次测试总是发现参考机就是比问题机快那么一点点。从配置上来将问题机跟参考机配置差不多，并且问题机的内存还比参考机大。为什么就是慢那么一点点呢。<br>下面尝试通过systrace文件去找原因。<br>这里我用命令：</p>
+<blockquote>
+<p>./systrace.py gfx input view wm am sm app res dalvik bionic pm database sched freq idle  disk mmc load -t 5 -o vJ5E-no-encrypt-no-net_emailv7.html</p>
+</blockquote>
+<p>分别抓取参考机和问题机的systrace。终于发现了问题所在。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-2f0603fc33e8b9f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="参考机systrace"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-fe1e85bdf2c64284.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="问题机systrace"></p>
+<p>从systrace对比非常明显的看到参考机没有bindApplication的过程，而问题机却在这个过程中消耗了0.226s。<br>我们知道冷启动应用都是需要走bindApplication过程的。<br>bindApplication过程会：<br>1.创建应用进程<br>2.加载应用dex执行文件<br>3.获取应用资源文件<br>4.makeApplication,初始化JavaContextClassLoader。<br>相应的热启动是不需要走上述过程的。</p>
+<p>为了验证上述分析。可以有个简单的方法，只要先启动Email,然后点击menu清除最近的应用，最后通过ps命令查看email进程是否还存在。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-1b581a47deefaca3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="清理应用结果"></p>
+<p>透过上面的分析可以确定参考机的Email应用一直都在后台运行。而测试测冷启动case时只是点击menu键，然后清除所有应用，在去启动Email。参考机的Email逃过了这一劫，清除的过程中，进程并没有被杀死。而问题机的Email就没那么幸运了，直接被杀的它妈都不认识它了。</p>
+<h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><p>由于参考机将Email配置成了后台一直运行，相当于拿问题机的冷启动耗时对比参考机的热启动应用耗时。想要达到参考机的启动速度，在平台侧可以也可以效仿参考机将Email配置成后台一直运行。<br>修改方法：<br>在frameworks/base/services/core/java/com/android/server/am/ProcessRecord.java</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">void kill(String reason, boolean noisy) &#123;</div><div class="line">    if(&quot;com.tct.email&quot;.equals(processName) </div><div class="line">     		&amp;&amp; !KILL_APP_REASON_PERMISSIONS_REVOKED.equals(reason)) &#123;</div><div class="line">	                return;</div><div class="line">			    &#125;</div><div class="line">			        //忽略其他code</div><div class="line">				&#125;</div></pre></td></tr></table></figure>
+</code></pre><p>但这种做法需要项目上根据需求做权衡。Email应用本身会定时去check邮件列表，发起网络请求，属于高耗电程序。一直在后台运行会消耗电量。</p>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>Email问题陆陆续续的分析了两周多，最开始一心要去从I/O速度上去分析个结果出来。没有去想其它的可能。中间一度想放弃，打算将问题归结到I/O，抛给底层同事去check。但心里始终不安，有空了就去想该问题。其实一开始也抓取过systrace，只是重点放在了分析I/O上，没有跟参考机做对比。没有对比就带来了伤害啊TT</p>
+<p>systrace是个好东西，有空打算专门写篇针对该工具的文章。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/02/18/Java_Heap_Stack/" title="Java内存分配---堆与栈">Java内存分配---堆与栈</a></h2>
+                <p class="excerpt">
+                
+                堆和栈的概念接触已久，也很容易让人似懂非懂。本文阐述它们的区别和作用。配合一个小例子，加深对其理解。
+堆内存堆内存是在Java程序运行时分配的，它用来存放对象，对象也总是在堆中。GC的作用域也是在堆内存上，它回收那些空引用对象。堆上的对象可以被程序全局应用到。
+栈内存栈内存是被执行线程所用的，它用来
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Java知识/">Java知识</a>
+</span><a class="btn-border-small" href="/2017/02/18/Java_Heap_Stack/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+        
+     
+   
+   
+  
+</section>
+
+            
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
