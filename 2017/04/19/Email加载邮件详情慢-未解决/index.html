@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Email加载邮件详情慢-未解决 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Email加载邮件详情慢-未解决 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Email加载邮件详情慢-未解决 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/04/19/Email加载邮件详情慢-未解决/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-04-19T13:35:08.000Z" class="post-list__meta--date date">2017-04-19</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Email加载邮件详情慢-未解决</h1>
+  </header>
+
+  <section class="post">
+    <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>打开Emial主界面，点击打开一封邮件，待邮件详情完全加载出来结束。这个过程相对参考机慢300ms左右.<br>问题机Email版本:versionName=v5.2.10.3.0214.0<br>参考机Email版本:versionName=v7.0.4.1.0312.0_0228</p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><h2 id="硬件对比"><a href="#硬件对比" class="headerlink" title="硬件对比"></a>硬件对比</h2><ul>
+<li>cpu 采用命令<code>adb shell cat /proc/cpuinfo</code>分别查看问题机与参考机cpu信息。得到下图结果<br><img src="http://img.blog.csdn.net/20170418222055825?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="cpuinfo 对比"><br>二者cpu均为高通4核cpu。</li>
+<li>memory 采用命令<code>adb shell cat /proc/meminfo</code>分别查看memory信息。得道下图结果。<br><img src="http://img.blog.csdn.net/20170418222203490?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="memory info 对比"><br>内存总大小问题机大于参考机</li>
+<li>分辨率  采用命令<code>adb shell wm size</code>和<code>adb shell wm density</code>分别查看分辨率<br>参考机:<br>Physical size: 720x1280<br>Physical density: 320<br>问题机:<br>Physical size: 720x1280<br>Physical density: 320<br>问题机地分辨率低。</li>
+</ul>
+<h2 id="Systrace对比"><a href="#Systrace对比" class="headerlink" title="Systrace对比"></a>Systrace对比</h2><p>在不链接网络的情况下，用相同的邮箱账号登陆邮件，测试发现确实能感受到问题机比参考机慢一点。为了尽量排除其他方面的影响，adb shell pm disable 掉其他一些无关应用，然后抓取不链接网络情况下问题机的systrace。</p>
+<blockquote>
+<p>./systrace.py –app=com.tct.email gfx input wm am sm res pm database disk mmc load view sched dalvik webview  -o mick-email-new-v7.html</p>
+</blockquote>
+<p>参考机systrace结果：<br><img src="http://img.blog.csdn.net/20170418222330561?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="参考机"></p>
+<p>问题机systrace结果：<br><img src="http://img.blog.csdn.net/20170418222424790?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="问题机"></p>
+<p>可以看到问题机1s～2s的时间区间内出现了一段真空地带,这个真空地带表明负责显示邮件内容的UI Thread这段时间没有在干活。这个真空地带是需要check的，很可能就是问题所在。</p>
+<p>在键盘输入4，或者鼠标点击面板的最后一个图标，拉动鼠标选中空白地带，这时该区域呈高亮状态，方便观察。<br><img src="http://img.blog.csdn.net/20170418222520167?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="高亮可疑区域"><br>高亮的空白区域耗时0.88s，也就是说在这0.88s UI Thread处在空闲状态，这个是非常不合理的。</p>
+<p><img src="http://img.blog.csdn.net/20170418222617594?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="可疑区域-分析1"><br>上图是查看空白区域的结果，查看重点用红框标示了出来。<br>针对框2，这个区域在我的浏览器为空白底色，不仔细放大观察，以为没什么东西，当用鼠标点击就会出现框3。这个是该bug给我们留下的线索。追上去，咬住它！<br>点击框3中的kworker/1:4，得到下图：<br><img src="http://img.blog.csdn.net/20170418222740547?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="kworker可疑"><br>框3清楚的显示出UI Thread为sleeping状态。它竟然在组织正需要它的时候闷头睡大觉，可恶&gt;_&lt;。<br>取而代之的是一个名叫kworker/1:4的家伙在干活干的飞起。这尼玛什么鬼，看起来是内核线程在工作啊。<br>同时我们知道了kworker/1:4的线程id：tid: 25514。是时候看看kworker/1:4是何方神圣了。</p>
+<p>要找出kworker究竟在干什么，不是一件容易的事情。对这方面缺乏经验，只能google之。<br>根据<a href="http://bootloader.wikidot.com/linux:android:kmsg尝试探究kworker。" target="_blank" rel="external">http://bootloader.wikidot.com/linux:android:kmsg尝试探究kworker。</a></p>
+<p>首先尝试klog：<br>单编/system/core/klog将生成的klog push到手机。无奈运行后没有生成任何文件，换路跟踪。</p>
+<p>再次尝试：adb shell dmesg |grep 25514<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[53573.013494] c1 [kworker/1:4 25514] BMS: lookup_soc_ocv: soc_final=100 soc_ocv=100 soc_cutoff=2 ocv_uv=4365250 batt_temp=284</div><div class="line">[53638.385439] c1 [kworker/1:4 25514] BMS: lookup_soc_ocv: soc_final=100 soc_ocv=100 soc_cutoff=2 ocv_uv=4364155 batt_temp=290</div><div class="line">[53642.865874] c1 [kworker/1:4 25514] power_supply battery: 2017-04-14 05:47:34 status:Discharging,health:Good,voltage:4351mV,capacity:100,current:148mA,temperature:28.6C,chgvoltage:111mV</div><div class="line">[53652.355277] c1 [kworker/1:4 25514] power_supply battery: 2017-04-14 05:56:56 status:Discharging,health:Good,voltage:4351mV,capacity:100,current:0mA,temperature:28.6C,chgvoltage:111mV</div><div class="line">[53655.318874] c1 [kworker/1:4 25514] BMS: lookup_soc_ocv: soc_final=100 soc_ocv=100 soc_cutoff=2 ocv_uv=4363258 batt_temp=286</div><div class="line">[53655.452755] c1 [kworker/1:4 25514] power_supply battery: 2017-04-14 06:04:51 status:Charging(USB),health:Good,voltage:4383mV,capacity:100,current:57mA,temperature:28.2C,chgvoltage:4932mV</div><div class="line">[53655.486877] c1 [kworker/1:4 25514] power_supply battery: 2017-04-14 06:04:51 status:Full,health:Good,voltage:4380mV,capacity:100,current:57mA,temperature:28.2C,chgvoltage:4925mV</div></pre></td></tr></table></figure></p>
+<p>从这段log还是看出了点端倪。kworker/1:4 是在执行power相关的逻辑。<br>先追查lookup_soc_ocv 函数出处：<br>kernel/drivers/power/qpnp-vm-bms.c，底层同事添加了一行log：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">if</span> defined (BUILD_ENG_VERSION)</span></div><div class="line">	pr_err(<span class="string">"soc_final=%d soc_ocv=%d soc_cutoff=%d ocv_uv=%u batt_temp=%d\n"</span>,</div><div class="line">			soc_final, soc_ocv, soc_cutoff, ocv_uv, batt_temp);</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure></p>
+<p>这里也加了判断，只有eng版本才会打印该log。而我因为需要root权限采取了user版本+eng boot的组合刷机。同时用user版本的boot测试也看到了kworker在block UI Thread。因此这个不是问题。<br>剩下power_supply来排查，无奈对kernel所知甚少，没有找出power_supply为何回出现。至此该条线陷入走投无路的窘境。</p>
+<h2 id="其它debug手段"><a href="#其它debug手段" class="headerlink" title="其它debug手段"></a>其它debug手段</h2><p>Systrace这条分析线没有突破，就尝试其它debug手段，先从vm配置查起。</p>
+<blockquote>
+<p>adb shell getprop|grep dalvik</p>
+</blockquote>
+<p>到到如下结果：<br><img src="http://img.blog.csdn.net/20170419191618474?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="dalvik参数"></p>
+<p>这里先介绍下系统的java vm各个配置项的含义。</p>
+<ul>
+<li>dalvik.vm.heapgrowthlimit  从字面解释就是堆内存的增长上限。也就是一个普通Android进程可使用的java层最大内存，如果给应用设置了<code>android:largeHeap=&quot;true&quot;</code> 属性，那么它就不在普通了，可使用的最大内存就取决与dalvik.vm.heapsize的值了。</li>
+<li>dalvik.vm.heapsize  Android Java空间的堆内存上限。如果没有设置<code>android:largeHeap=&quot;true&quot;</code> 属性，真正约束进程堆内存上限的还是dalvik.vm.heapgrowthlimit 属性的值</li>
+<li>dalvik.vm.heapstartsize  Android进程Java空间初始堆大小</li>
+<li>dalvik.vm.heapmaxfree Android进程Java堆内存最大剩余空间</li>
+<li>dalvik.vm.heapminfree Android进程Java堆内存最小剩余空间</li>
+<li>dalvik.vm.heaptargetutilization Android进程Java堆内存利用率</li>
+</ul>
+<p>以上是比较书面的解释，打个通俗的比方来对照理解上面各项的含义。</p>
+<p>银行信用卡总部计划为个人提供一种额度最高上线为20万元的卡，这个就是heapsize。然后具体到各个分行执行时，考虑到风控，到普通个人头上时，该信用卡额度降成了10万，这就是heapgrowthlimit。如果王麻子跟分行的行长熟，老铁给我给我提升额度呗，这就是王麻子设置了largeheap=true。行长说没问题，给你搞到最高额度，于是王麻子的额度就不在受分行10万元的额度限制了，但它依然受总行20万元的限制。</p>
+<p>然后王麻子开始第一次使用信用卡，不管王麻子实际要用多少钱，银行只提供1万元。多了他留着，不够在提申请。这个就是heapstartsize。</p>
+<p>银行出于风险收益考虑，怕王麻子顶额透支信用卡风险太高，如果放款太少的话银行收益又低。因此就提出了一个信额使用率的概念，就是heaptargetutilization，它等于已经分配出去的内存空间/可用内存空间。<br>在配合上最大闲置资金heapmaxfree和最小闲置资金heapminfree一起来管控收放资金。</p>
+<p>上面说了这么多，检查下来dalvik.vm的配置不是导致性能的瓶颈。</p>
+<p>在看CPU方面，从Systrace确实看到问题机的CPU相对于参考机有部分闲置情况。进入手机shell环境，使用命令：</p>
+<blockquote>
+<p>echo 1 &gt; /sys/devices/system/cpu/cpu0/online<br>echo 1 &gt; /sys/devices/system/cpu/cpu1/online<br>echo 1 &gt; /sys/devices/system/cpu/cpu2/online<br>echo 1 &gt; /sys/devices/system/cpu/cpu3/online</p>
+</blockquote>
+<p>将4颗CPU都拉起来，但依然还有问题，看起来瓶颈也不在CPU。</p>
+<p>email的正文是webview渲染出来的。可能也回涉及到GPU，在从这个方向debug。使用命令：</p>
+<blockquote>
+<p>echo performance &gt; /sys/class/kgsl/kgsl-3d0/devfreq/governor</p>
+</blockquote>
+<p>将GPU调整至性能模式，依然有问题。</p>
+<p>内存不是瓶颈，CPU/GPU不是瓶颈，不由的让我考虑emcc的影响，之前跑一些跑分软件就发现问题机的emcc读写速率不及参考机。最直接有效的办法是交换参考机和问题机的emcc，然而在实际操作中，硬件结构同事并不那么配合。因此也只能停留在猜想阶段了。</p>
+<p>自己猜测，问题的瓶颈在于加载Email详情需要从数据库和文件读取邮件正文内容，这个过程不可避免的涉及I/O，问题机的emcc读取速率较低，因此在该处形成了性能瓶颈。</p>
+<h1 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h1><p>该问题看似找到了一点突破口，但在分析转到kernel部分后无法继续在分析。还得多掌握Linux底层调试技巧跟方法。</p>
+<p>后续若有进展还会更新，也欢迎看到得朋友提供思路跟方法。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/03/18/Android_app_launch_perf/" title="Android 性能优化之应用启动">Android 性能优化之应用启动</a></h2>
+                <p class="excerpt">
+                
+                写在前面最近工作转到Android 性能优化方向，刚转过来，相关经验缺乏，纪录一个目前让人恼火的问题。非常遗憾，本文到目前为止还未能提供解决问题的优化方案，也没有明确定位到导致性能问题的瓶颈所在。就像解数学题一样，花费了大把时间，然并卵。之所以写它，两个目的：
+
+这个过程中，自己还是有一定收获的，且
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-03-18T14:55:08.000Z" class="post-list__meta--date date">2017-03-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/03/18/Android_app_launch_perf/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
