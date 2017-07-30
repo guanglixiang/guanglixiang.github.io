@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android开机底层优化 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android开机底层优化 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android开机底层优化 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/Android开机底层优化/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android开机底层优化</h1>
+  </header>
+
+  <section class="post">
+    <p>本篇博文作为<a href="http://blog.csdn.net/azhengye/article/details/69831590" target="_blank" rel="external">Android 开机优化 </a> 的续篇，之前的博文在排查底层耗时比较粗糙。本篇作为补充，提供剖析底层耗时的方法。</p>
+<h1 id="优化Bootloader"><a href="#优化Bootloader" class="headerlink" title="优化Bootloader"></a>优化Bootloader</h1><ul>
+<li>减少不必要的log，最近遇到的开机慢问题就发现UART log没有关闭，这里一般而言能优化1s左右的时间。UART关闭改动kernel config文件的如下：<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CONFIG_SERIAL_MSM_HSL=n</div><div class="line">CONFIG_SERIAL_MSM_HSL_CONSOLE=n</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><a href="http://blog.csdn.net/azhengye/article/details/69831590" target="_blank" rel="external">Android 开机优化 </a>里也提到了可以移除部分无用的kernel config，为了方便check，编写了一个python脚本，可以方便查看哪些无用config依然包含在项目中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="string">'''</span></div><div class="line">@author: azhengye</div><div class="line">'''</div><div class="line"><span class="keyword">import</span> difflib</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">_DEFAULT_CAN_REMOVE_CONFIG = [</div><div class="line">    <span class="string">'CONFIG_SCHED_DEBUG\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_KMEMLEAK\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_SPINLOCK\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_MUTEXES\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_ATOMIC_SLEEP\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_STACK_USAGE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_LIST\n'</span>,</div><div class="line">    <span class="string">'CONFIG_FAULT_INJECTION_DEBUG_FS\n'</span>,</div><div class="line">    <span class="string">'CONFIG_LOCKUP_DETECTOR\n'</span></div><div class="line">    <span class="string">'CONFIG_DEBUG_PAGEALLOC\n'</span>,</div><div class="line">    <span class="string">'CONFIG_PAGE_POISONING\n'</span>,</div><div class="line">    <span class="string">'CONFIG_RMNET_DATA_DEBUG_PKT\n'</span>,</div><div class="line">    <span class="string">'CONFIG_MMC_PERF_PROFILING\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_BUS_VOTER\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SLUB_DEBUG\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DEBUG_BUGVERBOSE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_ALLOC_BUFFERS_IN_4K_CHUNK\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SERIAL_CORE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SERIAL_CORE_CONSOLE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SERIAL_MSM_HSL\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SERIAL_MSM_HSL_CONSOLE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_MSM_TZ_LOG\n'</span>,</div><div class="line">    <span class="string">'CONFIG_DYNAMIC_DEBUG\n'</span>,</div><div class="line">    <span class="string">'CONFIG_ANDROID_LOGGER\n'</span>,</div><div class="line">    <span class="string">'CONFIG_IMX134\n'</span>,</div><div class="line">    <span class="string">'CONFIG_IMX132\n'</span>,</div><div class="line">    <span class="string">'CONFIG_OV9724\n'</span>,</div><div class="line">    <span class="string">'CONFIG_OV5648\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_MON\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_DATAFAB\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_FREECOM\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_ISD200\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_USBAT\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_SDDR09\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_SDDR55\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_JUMPSHOT\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_ALAUDA\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_KARMA\n'</span>,</div><div class="line">    <span class="string">'CONFIG_USB_STORAGE_CYPRESS_ATACB\n'</span>,</div><div class="line">    <span class="string">'CONFIG_SEEMP_CORE\n'</span>,</div><div class="line">    <span class="string">'CONFIG_MSM_SMEM_LOGGING\n'</span>,</div><div class="line">    <span class="string">'CONFIG_IOMMU_DEBUG\n'</span>,</div><div class="line">    <span class="string">'CONFIG_IOMMU_DEBUG_TRACKING\n'</span>,</div><div class="line">    <span class="string">'CONFIG_IOMMU_TESTS\n'</span>,</div><div class="line">    <span class="string">'CONFIG_MOBICORE_DRIVER\n'</span>,</div><div class="line">    <span class="string">'CONFIG_MSDOS_FS\n'</span>,</div><div class="line">]</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(argv)</span>:</span></div><div class="line">  <span class="keyword">if</span> len(argv) != <span class="number">2</span>:</div><div class="line">     <span class="keyword">print</span> <span class="string">'%s: invalid arguments'</span> % argv[<span class="number">0</span>]</div><div class="line">     <span class="keyword">return</span> <span class="number">2</span></div><div class="line">  filename1 = argv[<span class="number">1</span>]</div><div class="line">  <span class="keyword">try</span>:</div><div class="line">    <span class="keyword">with</span> open(filename1, <span class="string">"r"</span>) <span class="keyword">as</span> f1:</div><div class="line">      str1 = f1.readlines();</div><div class="line">      list1 =[]</div><div class="line">      <span class="keyword">for</span> string <span class="keyword">in</span> str1:</div><div class="line">          <span class="keyword">if</span> string.startswith(<span class="string">'#'</span>) <span class="keyword">or</span> len(string) &lt;= <span class="number">6</span>:</div><div class="line">              <span class="keyword">continue</span></div><div class="line">          list1.append(string.split(<span class="string">'='</span>)[<span class="number">0</span>]+<span class="string">'\n'</span>)</div><div class="line">    diffs = difflib.unified_diff(</div><div class="line">        _DEFAULT_CAN_REMOVE_CONFIG, list1)</div><div class="line">  <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</div><div class="line">    <span class="keyword">print</span> <span class="string">"something wrong: %s"</span> % e</div><div class="line">    <span class="keyword">return</span> <span class="number">1</span></div><div class="line">  status_code = <span class="number">0</span></div><div class="line">  <span class="keyword">for</span> diff <span class="keyword">in</span> diffs:</div><div class="line">    <span class="keyword">if</span> diff.startswith(<span class="string">'+'</span>) <span class="keyword">or</span> diff.startswith(<span class="string">'-'</span>) <span class="keyword">or</span> diff.startswith(<span class="string">'@'</span>):</div><div class="line">        <span class="keyword">continue</span></div><div class="line">    sys.stdout.write(<span class="string">'follow config can be remove====&gt;'</span>)</div><div class="line">    sys.stdout.write(diff)</div><div class="line">    status_code = <span class="number">1</span></div><div class="line">  <span class="keyword">return</span> status_code</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">  sys.exit(main(sys.argv))</div></pre></td></tr></table></figure>
+<p>特别说明下脚本中_DEFAULT_CAN_REMOVE_CONFIG只是一个通用的可移除config列表,在移除之前一定要跟具体项目挂钩check。</p>
+<p>脚本使用方法：<br>a： 先单独编译user版本的kernel，然后去out目录下找到生成的.config文件。<br>b： 保持上述脚本为check-config.py。 运行check-config.py .config<br>输出如下类似结果:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">follow config can be remove====&gt; CONFIG_MMC_PERF_PROFILING</div><div class="line">follow config can be remove====&gt; CONFIG_MSM_TZ_LOG</div></pre></td></tr></table></figure></p>
+<ul>
+<li>内核编译完成后会生成zImage内核镜像文件。然后bootloader加载zImage，这之后就需要解压zImage.默认的压缩算法是GZIP，使用LZ4压缩算法能缩短时间。可以参考该patch[<a href="https://patchwork.kernel.org/patch/6810841/" target="_blank" rel="external">https://patchwork.kernel.org/patch/6810841/</a>] 来修改。这块节省的时间有限，不到1s，权衡利弊后，最终没有take到实际项目中，追求完美的你可以试试。风险自担-_-</li>
+</ul>
+<h1 id="boot签名校验优化"><a href="#boot签名校验优化" class="headerlink" title="boot签名校验优化"></a>boot签名校验优化</h1><p>最近新项目上出现的这个坑，由于项目是高通平台，同时自定义了一套自己的签名规则，在自定义签名出问题时，又会重新走高通的签名。拉长了启动时间。之前怀疑过这块，但苦于找不到证据。最终还是在查看/proc下面的一堆节点时找到了线索，cat /proc/morelog找到了证据：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[<span class="number">730</span>] boot_verifier: Signature decrypt failed! Signature invalid = <span class="number">-1</span></div><div class="line">[<span class="number">790</span>] Your device has loaded a different operating system.</div><div class="line">Wait <span class="keyword">for</span> <span class="number">5</span> seconds before proceeding</div></pre></td></tr></table></figure></p>
+<p>拿到这个证据，找负责签名的同事更改这块，优化了不少时间。</p>
+<p>同时还发现了一个好东西/proc/bootprof，之前没有关注过这个节点，cat一下看到了非常有用的信息，列出来感受下。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">----------------------------------------</div><div class="line">0	    BOOT PROF (unit:msec)</div><div class="line">----------------------------------------</div><div class="line">       953        : preloader</div><div class="line">       779        : first logo</div><div class="line">      2671        : lk</div><div class="line">----------------------------------------</div><div class="line">        20.233999 : ON</div><div class="line">       135.360846 :    1-swapper/0       : initcall: arm64_device_init    49.639539ms</div><div class="line">       218.746846 :    1-swapper/0       : initcall: event_trace_init    33.785154ms</div><div class="line">       236.874461 :    1-swapper/0       : probe: probe=platform_drv_probe drv=mt-pmic(ffffffc001076840)    15.639385ms</div><div class="line">       236.918615 :    1-swapper/0       : initcall: pmic_mt_init    16.109692ms</div><div class="line">       311.124539 :    1-swapper/0       : initcall: populate_rootfs    71.181924ms</div><div class="line">       381.334693 :    1-swapper/0       : probe: probe=platform_drv_probe drv=musb-hdrc(ffffffc0010829f0)    17.795231ms</div><div class="line">       381.360769 :    1-swapper/0       : probe: probe=platform_drv_probe drv=musb-mtu3d(ffffffc001082c30)    17.965769ms</div><div class="line">       381.861308 :    1-swapper/0       : initcall: mtu3d_driver_init    18.712692ms</div><div class="line">      1717.001003 :    1-swapper/0       : probe: probe=i2c_device_probe drv=bq25890(ffffffc00110cc58)  1248.854233ms</div><div class="line">      1717.779465 :    1-swapper/0       : initcall: bq25890_init  1249.733311ms</div><div class="line">      1828.548927 :    1-swapper/0       : probe: probe=platform_drv_probe drv=mtkfb(ffffffc001096780)    29.705308ms</div><div class="line">      1829.394927 :    1-swapper/0       : initcall: mtkfb_init    30.689154ms</div><div class="line">     //省略内容</div></pre></td></tr></table></figure></p>
+<p>还有/proc/bootmsg节点也非常有用。<br>这里正好弥补了<a href="http://blog.csdn.net/azhengye/article/details/69831590" target="_blank" rel="external">Android 开机优化 </a> 中perftool的不足，能看到更底层的启动耗时。</p>
+<h1 id="systrace-debug-开机问题"><a href="#systrace-debug-开机问题" class="headerlink" title="systrace debug 开机问题"></a>systrace debug 开机问题</h1><p>systrace的根基是linux 的ftrace，它不仅能分析上层的性能问题，底层问题同样也可以使用，不过需要对底层代码做些修改。具体如下：</p>
+<ul>
+<li>修改frameworks/native/cmds/atrace/atrace.rc<br>打开默认关闭的trace开关。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-    write /sys/kernel/debug/tracing/tracing_on <span class="number">0</span></div><div class="line">+    <span class="meta">#write /sys/kernel/debug/tracing/tracing_on 0</span></div></pre></td></tr></table></figure>
+<ul>
+<li>适当的位置加入如下改动，之所以适当，因为不同平台编译文件有差异，这个需要结合项目代码去寻找位置。高通平台可以在device/qcom/common/common.mk文件中添加：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PRODUCT_PROPERTY_OVERRIDES += debug.atrace.tags.enableflags=<span class="number">802922</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p>同样适当的make文件中加入如下修改，比如BoardConfig.mk文件</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BOARD_KERNEL_CMDLINE += trace_buf_size=<span class="number">64</span>M trace_event=sched_wakeup,sched_switch,sched_blocked_reason,sched_cpu_hotplug,block,ext4</div></pre></td></tr></table></figure>
+</li>
+<li><p>项目的init.rc文件加入如下修改,目的是结束trace记录。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> on property:sys.boot_completed=<span class="number">1</span></div><div class="line">    start qrngp</div><div class="line">+   write /d/tracing/tracing_on <span class="number">0</span></div><div class="line">+   write /d/tracing/events/ext4/enable <span class="number">0</span></div><div class="line">+   write /d/tracing/events/block/enable <span class="number">0</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>做完上述修改后编译烧录镜像文件，待开机结束后执行:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb root &amp;&amp; adb shell <span class="string">"cat /d/tracing/trace"</span> &gt; boot_trace</div></pre></td></tr></table></figure></p>
+<p>然后执行<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">external/chromium-trace/catapult/tracing/bin/trace2html boot_trace</div></pre></td></tr></table></figure></p>
+<p>上述命令可以将trace log转成systrace文件，用chrome浏览器打开，方便分析。<br><img src="http://img.blog.csdn.net/20170603184329131?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>开机优化问题涉及的模块很多，通过这两篇博文，大致给出了从底层到上层的分析方法和部分解决方案。欢迎大家一起探讨分享。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/" title="Android-battery-historian功耗分析之环境搭建">Android-battery-historian功耗分析之环境搭建</a></h2>
+                <p class="excerpt">
+                
+                
+凡事谦虚、温柔、忍耐、用爱心互相宽容，用平和彼此联络，竭力保守圣灵所赐合而为一的心。—-以弗所书4:2-3
+
+battery historian 是什么battery historian是用go语言开发的一个电池耗电分析工具，Android 5.0以后的版本可以使用它。其官方文档地址https:/
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

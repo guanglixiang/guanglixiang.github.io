@@ -124,6 +124,128 @@
   
     
     <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机底层优化/" title="link to post.title">Android开机底层优化</a></h2>
+      <p class="excerpt">
+    
+      本篇博文作为Android 开机优化  的续篇，之前的博文在排查底层耗时比较粗糙。本篇作为补充，提供剖析底层耗时的方法。
+优化Bootloader
+减少不必要的log，最近遇到的开机慢问题就发现UART log没有关闭，这里一般而言能优化1s左右的时间。UART关闭改动kernel config文件的如下：12CONFIG_SERIAL_MSM_HSL=nCONFIG_SERIAL_MSM_HSL
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android开机底层优化/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/" title="link to post.title">Android-battery-historian功耗分析之环境搭建</a></h2>
+      <p class="excerpt">
+    
+      
+凡事谦虚、温柔、忍耐、用爱心互相宽容，用平和彼此联络，竭力保守圣灵所赐合而为一的心。—-以弗所书4:2-3
+
+battery historian 是什么battery historian是用go语言开发的一个电池耗电分析工具，Android 5.0以后的版本可以使用它。其官方文档地址https://github.com/google/battery-historian。
+环境配置安装Go语言从g
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android内存查看常用命令/" title="link to post.title">Android内存查看常用命令</a></h2>
+      <p class="excerpt">
+    
+      
+事情的终局强如事情的起头；存心忍耐的，胜过居心骄傲的。—传道书7:8
+
+RAM(random-access memory)即内存的使用情况对系统的性能影响很大，OOM问题、内存泄露、程序卡顿等诸多问题，都跟不合理的内存使用相关，并且这类问题一般都比较隐晦，要解决该类问题，熟悉内存查看的方法很有必要。本篇博文介绍Android平台上常用的内存观测方法。
+procrank与procmem这两个命令均
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android内存查看常用命令/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-Battery视图界面分析/" title="link to post.title">Android-Battery视图界面分析</a></h2>
+      <p class="excerpt">
+    
+      
+每一个不曾起舞的日子，都是对生命的辜负。—–尼采
+
+最近关注功耗问题，顺便看了下Settings模块中Battery界面。这块的UI还是写的挺不错的，在此分享下。
+Battery界面分析下图是我在看该界面时，脑中的一些疑惑点。上图列出的三大块疑问，正是引起我好奇心的地方。先来一个一个说下当初自己想的实现方式。
+
+battery saver的跳转处理：这个界面跳转肯定是Preference里面弄个
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-Battery视图界面分析/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/IPC通信方式之LocalSocket/" title="link to post.title">IPC通信方式之LocalSocket</a></h2>
+      <p class="excerpt">
+    
+      
+人生有八苦：生，老，病，死，爱别离，怨长久，求不得，放不下。
+
+LocalSocket是什么在弄清LocalSocket是什么之前，有必要先了解下Socket是什么。Socket通常翻译为套接字，它是为了方便让两台机器能互相通信的一套技术，该套技术封装好了繁琐的TCP/IP协议，向外提供出简单的API简化了通信实现的过程，其可以实现不同层面，不同应用，跨进程跨网络的通信。依据Socket提供的数
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/IPC通信方式之LocalSocket/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/dex2oat对应用启动性能的影响/" title="link to post.title">dex2oat对应用启动性能的影响</a></h2>
+      <p class="excerpt">
+    
+      
+不可忘记用爱心接待客旅，因为曾有接待客旅的，不知不觉就接待了天使。—希伯来书13:2
+
+问题描述chrome应用冷启动缓慢，跟参考机相比在luncher界面点击chrome图标，有一个明显的延迟，然后chrome才被启动起来。从点击图标到第一个界面加载完全显示，问题机相对参考机要慢3s左右。
+初步分析在 Android 平台侧性能优化之应用启动 一文里遇到过假冷启动引发的类似问题，按照这个思路检
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/dex2oat对应用启动性能的影响/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机优化/" title="link to post.title">Android开机优化</a></h2>
+      <p class="excerpt">
+    
+      问题描述开机时间相对参考机过慢，大约慢15s左右。Android 系统7.0。
+问题分析开机问题涉及的层次较多，大致有bootloader–&amp;gt;kernel–&amp;gt;Zygote–&amp;gt;PMS–&amp;gt;AMS–&amp;gt;Launcher可以借助bootchart来分析，也可以直接通过log分析。不幸的是本项目机器因未知原因导致无法抓取到bootchart。幸好在我浏览源码时发现了一个神器per
+    &hellip;
+      </p>
+      <div class="post-list__meta"><time datetime="2017-07-30T15:14:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android开机优化/">继续阅读</a></div>
+      <hr class="post-list__divider" />
+    </li>
+  
+    
+    <li>
       <h2 class="post-list__post-title post-title"><a href="/2017/04/19/Email加载邮件详情慢-未解决/" title="link to post.title">Email加载邮件详情慢-未解决</a></h2>
       <p class="excerpt">
     
@@ -173,39 +295,16 @@ cpu 采用命令adb shell cat /proc/cpuinfo分别查看问题机与参考机cpu�
     </li>
   
     
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/02/18/Java_Heap_Stack/" title="link to post.title">Java内存分配---堆与栈</a></h2>
-      <p class="excerpt">
-    
-      堆和栈的概念接触已久，也很容易让人似懂非懂。本文阐述它们的区别和作用。配合一个小例子，加深对其理解。
-堆内存堆内存是在Java程序运行时分配的，它用来存放对象，对象也总是在堆中。GC的作用域也是在堆内存上，它回收那些空引用对象。堆上的对象可以被程序全局应用到。
-栈内存栈内存是被执行线程所用的，它用来存放引用，这些引用指向堆内存上的对象。栈内存的分配依赖方法调用，当一个方法被调用到，此时一块内存区域
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Java知识/">Java知识</a>
-</span><a class="btn-border-small" href="/2017/02/18/Java_Heap_Stack/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/02/18/android_app_launcher_perf2/" title="link to post.title">Android 平台侧性能优化之应用启动[问题已解决]</a></h2>
-      <p class="excerpt">
-    
-      上一篇文章Android 平台侧性能优化之应用启动采用多个命令分析了平台的cpu/memory等方面对Email启动慢照成的影响。很遗憾花了许多精力，但依然没有找出问题所在，这个坑终于填平了。手动撒花^_^回头看来，问题其实很简单，一开始走错方向，导致花了许多精力，不过这个过程也同样积累了不少知识。本篇文章记录填坑的过程，重新换个角度分析。
-曙光出现：同事在分析另外一个I/O读取慢的问题时发现我们
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/02/18/android_app_launcher_perf2/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
   </ol>
 
+
+  <nav class="pagination" role="navigation">
+    
+    <span class="pagination__page-number" > 1 / 2 </span>
+    
+      <a class="older-posts pagination__older btn btn-small btn-tertiary" href="/archives/page/2/">更早 →</a>
+    
+  </nav>
 
  <script type="text/x-mathjax-config">
     MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },

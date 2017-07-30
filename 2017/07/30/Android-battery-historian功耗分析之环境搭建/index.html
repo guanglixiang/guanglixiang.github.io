@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android-battery-historian功耗分析之环境搭建 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android-battery-historian功耗分析之环境搭建 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android-battery-historian功耗分析之环境搭建 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/Android-battery-historian功耗分析之环境搭建/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android-battery-historian功耗分析之环境搭建</h1>
+  </header>
+
+  <section class="post">
+    <blockquote>
+<p>凡事谦虚、温柔、忍耐、用爱心互相宽容，用平和彼此联络，竭力保守圣灵所赐合而为一的心。—-以弗所书4:2-3</p>
+</blockquote>
+<h1 id="battery-historian-是什么"><a href="#battery-historian-是什么" class="headerlink" title="battery historian 是什么"></a>battery historian 是什么</h1><p>battery historian是用go语言开发的一个电池耗电分析工具，Android 5.0以后的版本可以使用它。其官方文档地址<a href="https://github.com/google/battery-historian。" target="_blank" rel="external">https://github.com/google/battery-historian。</a></p>
+<h1 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1><h2 id="安装Go语言"><a href="#安装Go语言" class="headerlink" title="安装Go语言"></a>安装Go语言</h2><p>从go官网<a href="http://golang.org/doc/install" target="_blank" rel="external">http://golang.org/doc/install</a> 下载安装 。没找到国内镜像，漫长的下载过程。mac版本下载pkg包后点击安装，此后go已经安装好了，为了使用方便还需要配置下环境变量。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ cd mydisk # 进入任意目录</div><div class="line">$ mkdir -p go-workspace/bin # go编译后的执行文件会放在该目录下</div><div class="line">$ mkdir -p go-workspace/src # 放置go语言编写的项目的源码</div><div class="line">#以后的项目结构大概如下图</div><div class="line">#bin/</div><div class="line">#    testA  # 可执行命令</div><div class="line">#    testB  # 可执行命令</div><div class="line">#src/</div><div class="line">#    projectA   #A工程文件</div><div class="line">#    projectB   #B工程文件</div><div class="line"></div><div class="line">#为了不用每次配置go的环境变量，将下面内容添加到.bashrc文件中</div><div class="line">export GOPATH=mydisk/go-workspace</div><div class="line">export GOBIN=$GOPATH/bin</div><div class="line">export PATH=$PATH:$GOBIN</div></pre></td></tr></table></figure></p>
+<h2 id="下载配置battery-historian"><a href="#下载配置battery-historian" class="headerlink" title="下载配置battery historian"></a>下载配置battery historian</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">go</span> get -d -u github.com/google/battery-historian/...</div></pre></td></tr></table></figure>
+<p>…要带上，这样才会将相关的依赖也同步下载下来。等待运行完成后，去$GOPATH/src下看到github.com目录，battery-historian就放在其下。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd <span class="keyword">go</span>-workspace/src/github.com/google/battery-historian</div><div class="line">$ <span class="keyword">go</span> run setup.<span class="keyword">go</span>  #漫长的等待，它需要联网下载以来库，编译Javascript等。</div></pre></td></tr></table></figure></p>
+<p>如果你所在地区被墙的厉害，可能只能看着<code>Downloading Closure library...</code> 干着急。去setup.go文件搜索Closure，原来一直在龟速下载<br><a href="http://dl.google.com/closure-compiler/compiler-20160208.zip。这时可以手动下载该包，解压到`src/github.com/google/battery-historian/third_party/closure-library" target="_blank" rel="external">http://dl.google.com/closure-compiler/compiler-20160208.zip。这时可以手动下载该包，解压到`src/github.com/google/battery-historian/third_party/closure-library</a> <code>。然后在去运行</code>go run setup.go `</p>
+<h2 id="启动battery-historian服务器"><a href="#启动battery-historian服务器" class="headerlink" title="启动battery historian服务器"></a>启动battery historian服务器</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd $GOPATH/src/github.com/google/battery-historian</div><div class="line">$ <span class="keyword">go</span> run cmd/battery-historian/battery-historian.<span class="keyword">go</span></div></pre></td></tr></table></figure>
+<p>必须要在$GOPATH/src/github.com/google/battery-historian directory目录下运行。<br>然后在浏览器中打开<a href="http://localhost:9999。就可以上传bugreport.txt进行分析了。" target="_blank" rel="external">http://localhost:9999。就可以上传bugreport.txt进行分析了。</a></p>
+<h1 id="分析battery-historian"><a href="#分析battery-historian" class="headerlink" title="分析battery historian"></a>分析battery historian</h1><h2 id="获取bugreport"><a href="#获取bugreport" class="headerlink" title="获取bugreport"></a>获取bugreport</h2><p>Android 6.0之前:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb bugreport &gt; bugreport.txt</div></pre></td></tr></table></figure></p>
+<p>Android 6.0之后:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ adb bugreportz</div><div class="line"># 根据提示adb pull出生成的压缩文件，然后解压</div><div class="line"></div><div class="line"># 某些手机上也可以使用旧的命令，执行完成后会生成一个压缩包和bugreport.txt，上传压缩包也能解析。</div><div class="line">$ adb bugreport &gt; bugreport.txt</div></pre></td></tr></table></figure>
+<h2 id="分析报告示例"><a href="#分析报告示例" class="headerlink" title="分析报告示例"></a>分析报告示例</h2><p>浏览器中打开<a href="http://localhost:9999。上传bugreport.txt进行分析。下图为上传后生成的报告。" target="_blank" rel="external">http://localhost:9999。上传bugreport.txt进行分析。下图为上传后生成的报告。</a><br><img src="http://img.blog.csdn.net/20170511235752294?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="报告示例"></p>
+<h1 id="半离线使用historian-py"><a href="#半离线使用historian-py" class="headerlink" title="半离线使用historian.py"></a>半离线使用historian.py</h1><p>historian.py是battery historian工具包下的一个脚本，它用来解析battery stats。<br>在分析前，先用命令</p>
+<blockquote>
+<p> adb shell dumpsys batterystats –reset</p>
+</blockquote>
+<p>清除测试前的电量数据，保证测试环境的干净，避免旧的脏数据影响。<br>如果要详细的分析wakelock事件，执行如下命令</p>
+<blockquote>
+<p>adb shell dumpsys batterystats –enable full-wake-history</p>
+</blockquote>
+<p>如果还要分析更加详细的kernel层wakelock，则需要root手机，按如下操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ adb shell</div><div class="line"># 设置trace事件</div><div class="line">$ echo &quot;power:wakeup_source_activate&quot; &gt;&gt; /d/tracing/set_event</div><div class="line">$ echo &quot;power:wakeup_source_deactivate&quot; &gt;&gt; /d/tracing/set_event</div><div class="line"># 设置一个8m的trace空间，防止trace空间溢出，抓取的log被冲掉</div><div class="line">$ echo 8192 &gt; /d/tracing/buffer_size_kb</div><div class="line">$ echo 1 &gt; /d/tracing/tracing_on</div></pre></td></tr></table></figure></p>
+<p>然后断开usb连接，避免连接usb线充电的干扰。此后愉快的玩耍手机，复现耗电问题。<br>一小段时间后，执行</p>
+<blockquote>
+<p>adb shell dumpsys batterystats &gt; batterystats.txt</p>
+</blockquote>
+<p>收集测试期间的电量数据，该数据被保存在batterystats.txt文件中。<br>这个时候就该historian.py出场了。如果你是clone的battery historian包，那么该脚本位于scripts/historian.py下。执行命令</p>
+<blockquote>
+<p>python historian.py batterystats.txt &gt; batterystats.html</p>
+</blockquote>
+<p>用chrome打开转换生成的batterystats.html文件，注意这个时候保持电脑连网，只要打开过一次浏览器加载了需要的js后面就可以不用在连线了。之所以叫半离线使用就在这。得到如下图的数据。<br><img src="http://img.blog.csdn.net/20170509224230411?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="historian 示意图"></p>
+<p>对照上图解释下各项数据的含义。按行分析图表，图表中的数据不代表该项的耗电量，被着色只是表示该项处于激活状态，它确实在耗电，但具体耗了多少电，图表是量化不出来的，只能定性的分析它耗电了。另外图表中耗电数据的呈现方式也不是按进程来组织的，而是按照耗电组件的方式排布，比如着大红色top行表示当前运行在前台的进程，切换前台进程，不管当前前台是哪个应用都始终被归类在top行里。</p>
+<p>在上一张官方的图例说明。<br><img src="http://img.blog.csdn.net/20170509230606664?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="官方图例说明"><br>对照官方图例介绍下各行的含义。</p>
+<ul>
+<li>battery_level: 开始测试时的电量，之前抓取的图可以看到电量是100，满电状态。</li>
+<li>top: 前台应用，如果要分析应用的耗电情况，那么在测试期间，就该保证应用一直处于前台。</li>
+<li>wifi_running: wifi连接情况下的耗电情况，我抓取时没开wifi，因此没有看到该项。</li>
+<li>screen: 亮屏状态，可以看到图表中该项着色有间隔，这是因为实验期间我关闭过屏幕，每关闭一次屏幕，着色就被打断。</li>
+<li>phone_in_call: 记录打电话的耗电状况。</li>
+<li>wake_lock: 应用被唤醒，该项数据非常有意义，频繁唤醒应用是高耗电的前兆，如果该项看到众多色块，往往需要重点去check。</li>
+<li>running: cpu在运行，同样表明在耗电。</li>
+<li>wake_reason: 被唤醒的原因，去代码看该次唤醒是否有必要，是否能将多个任务集中在一起，唤醒一次去执行。<br>mobile_radio: BP侧耗电，通常是指SIM卡，数据链接。该栏过多着色，间隔多。表示功耗也会高。</li>
+</ul>
+<p>在细说下一点。有时数据量大，很多色被挤压在一起不太方便观察，此时可以用放大功能，类似systrace工具中的w键，但该工具做的没systrace便利，还需要手动填写缩放比例，具体下图我放大了1000.<br><img src="http://img.blog.csdn.net/20170509233837352?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="放大比例"></p>
+<p>放大后看看top项。<br><img src="http://img.blog.csdn.net/20170509233949493?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>这里的u0a99代表的是进程id，某些手机能直接显示出进程名，如果厂商该ROM，可能导致进程名无法显示出来，这时可以去ps进程id，方向查到对应的包名。如果看的细心点还可以发现u0a99之后出现了u0a114，这个是因为实验时我切换了前台应用，可以看到这个动作很精确的被historian捕捉到了。</p>
+<h1 id="电量监控分析"><a href="#电量监控分析" class="headerlink" title="电量监控分析"></a>电量监控分析</h1><p>从官方文档看该工具还能进行电量监控，但依赖源码的某些文件。暂时还未完全配置好，先挖个坑，以后回填。<br>monsoon.py 使用前需要安装</p>
+<ul>
+<li>gflags</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/google/python-gflags.git</div><div class="line">$ cd python-gflags</div><div class="line">$ sudo python setup.py install</div></pre></td></tr></table></figure>
+<ul>
+<li>pyserial</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/pyserial/pyserial.git</div><div class="line">$ cd pyserial</div><div class="line">$ sudo python setup.py install</div></pre></td></tr></table></figure>
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机底层优化/" title="Android开机底层优化">Android开机底层优化</a></h2>
+                <p class="excerpt">
+                
+                本篇博文作为Android 开机优化  的续篇，之前的博文在排查底层耗时比较粗糙。本篇作为补充，提供剖析底层耗时的方法。
+优化Bootloader
+减少不必要的log，最近遇到的开机慢问题就发现UART log没有关闭，这里一般而言能优化1s左右的时间。UART关闭改动kernel config文件
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android开机底层优化/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android内存查看常用命令/" title="Android内存查看常用命令">Android内存查看常用命令</a></h2>
+                <p class="excerpt">
+                
+                
+事情的终局强如事情的起头；存心忍耐的，胜过居心骄傲的。—传道书7:8
+
+RAM(random-access memory)即内存的使用情况对系统的性能影响很大，OOM问题、内存泄露、程序卡顿等诸多问题，都跟不合理的内存使用相关，并且这类问题一般都比较隐晦，要解决该类问题，熟悉内存查看的方法很有必要
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android内存查看常用命令/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

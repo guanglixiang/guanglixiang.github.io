@@ -124,17 +124,21 @@
   
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机底层优化/" title="link to post.title">Android开机底层优化</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-Battery视图界面分析/" title="link to post.title">Android-Battery视图界面分析</a></h2>
       <p class="excerpt">
     
-      本篇博文作为Android 开机优化  的续篇，之前的博文在排查底层耗时比较粗糙。本篇作为补充，提供剖析底层耗时的方法。
-优化Bootloader
-减少不必要的log，最近遇到的开机慢问题就发现UART log没有关闭，这里一般而言能优化1s左右的时间。UART关闭改动kernel config文件的如下：12CONFIG_SERIAL_MSM_HSL=nCONFIG_SERIAL_MSM_HSL
+      
+每一个不曾起舞的日子，都是对生命的辜负。—–尼采
+
+最近关注功耗问题，顺便看了下Settings模块中Battery界面。这块的UI还是写的挺不错的，在此分享下。
+Battery界面分析下图是我在看该界面时，脑中的一些疑惑点。上图列出的三大块疑问，正是引起我好奇心的地方。先来一个一个说下当初自己想的实现方式。
+
+battery saver的跳转处理：这个界面跳转肯定是Preference里面弄个
     &hellip;
       </p>
       <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/07/30/Android开机底层优化/">继续阅读</a></div>
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-Battery视图界面分析/">继续阅读</a></div>
       <hr class="post-list__divider" />
     </li>
   
@@ -153,44 +157,6 @@ battery historian 是什么battery historian是用go语言开发的一个电池�
       <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
   <a class="tag-link" href="/tags/Android基础/">Android基础</a>
 </span><a class="btn-border-small" href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android内存查看常用命令/" title="link to post.title">Android内存查看常用命令</a></h2>
-      <p class="excerpt">
-    
-      
-事情的终局强如事情的起头；存心忍耐的，胜过居心骄傲的。—传道书7:8
-
-RAM(random-access memory)即内存的使用情况对系统的性能影响很大，OOM问题、内存泄露、程序卡顿等诸多问题，都跟不合理的内存使用相关，并且这类问题一般都比较隐晦，要解决该类问题，熟悉内存查看的方法很有必要。本篇博文介绍Android平台上常用的内存观测方法。
-procrank与procmem这两个命令均
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/07/30/Android内存查看常用命令/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-Battery视图界面分析/" title="link to post.title">Android-Battery视图界面分析</a></h2>
-      <p class="excerpt">
-    
-      
-每一个不曾起舞的日子，都是对生命的辜负。—–尼采
-
-最近关注功耗问题，顺便看了下Settings模块中Battery界面。这块的UI还是写的挺不错的，在此分享下。
-Battery界面分析下图是我在看该界面时，脑中的一些疑惑点。上图列出的三大块疑问，正是引起我好奇心的地方。先来一个一个说下当初自己想的实现方式。
-
-battery saver的跳转处理：这个界面跳转肯定是Preference里面弄个
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
-</span><a class="btn-border-small" href="/2017/07/30/Android-Battery视图界面分析/">继续阅读</a></div>
       <hr class="post-list__divider" />
     </li>
   
@@ -230,81 +196,8 @@ LocalSocket是什么在弄清LocalSocket是什么之前，有必要先了解下S
     </li>
   
     
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机优化/" title="link to post.title">Android开机优化</a></h2>
-      <p class="excerpt">
-    
-      问题描述开机时间相对参考机过慢，大约慢15s左右。Android 系统7.0。
-问题分析开机问题涉及的层次较多，大致有bootloader–&amp;gt;kernel–&amp;gt;Zygote–&amp;gt;PMS–&amp;gt;AMS–&amp;gt;Launcher可以借助bootchart来分析，也可以直接通过log分析。不幸的是本项目机器因未知原因导致无法抓取到bootchart。幸好在我浏览源码时发现了一个神器per
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-07-30T15:14:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/07/30/Android开机优化/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/04/19/Email加载邮件详情慢-未解决/" title="link to post.title">Email加载邮件详情慢-未解决</a></h2>
-      <p class="excerpt">
-    
-      问题描述打开Emial主界面，点击打开一封邮件，待邮件详情完全加载出来结束。这个过程相对参考机慢300ms左右.问题机Email版本:versionName=v5.2.10.3.0214.0参考机Email版本:versionName=v7.0.4.1.0312.0_0228
-问题分析硬件对比
-cpu 采用命令adb shell cat /proc/cpuinfo分别查看问题机与参考机cpu信息。
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-04-19T13:35:08.000Z" class="post-list__meta--date date">2017-04-19</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/04/19/Email加载邮件详情慢-未解决/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/03/18/Android_app_launch_perf/" title="link to post.title">Android 性能优化之应用启动</a></h2>
-      <p class="excerpt">
-    
-      写在前面最近工作转到Android 性能优化方向，刚转过来，相关经验缺乏，纪录一个目前让人恼火的问题。非常遗憾，本文到目前为止还未能提供解决问题的优化方案，也没有明确定位到导致性能问题的瓶颈所在。就像解数学题一样，花费了大把时间，然并卵。之所以写它，两个目的：
-
-这个过程中，自己还是有一定收获的，且做纪录。
-抛出问题，希望能与更多人一起讨论性能优化的方法。
-
-问题描述冷启动email应用相对于参考
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-03-18T14:55:08.000Z" class="post-list__meta--date date">2017-03-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/03/18/Android_app_launch_perf/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/02/18/4dayscode/" title="link to post.title">四天时间改了一行代码</a></h2>
-      <p class="excerpt">
-    
-      最近手头分来了一个bug，该bug很诡吊，一行代码的改动，花了四天时间，因为该Bug会block出货，项目经理每天催问进度，期间真是感觉整个人都不好了。本篇博文记录解决该问题的坎坷历程，因为代码保密原则，技术细节不便详细给出，重点记录解决问题的过程。
-问题描述MTK平台双摄拍完的景深图片在Gallery内，能进行refocus（重聚焦）操作，Camera近期新增拍摄4：3比例的图片，refocus
-    &hellip;
-      </p>
-      <div class="post-list__meta"><time datetime="2017-02-18T14:55:08.000Z" class="post-list__meta--date date">2017-02-18</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
-  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
-</span><a class="btn-border-small" href="/2017/02/18/4dayscode/">继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-  
-    
   </ol>
 
-
-  <nav class="pagination" role="navigation">
-    
-    <span class="pagination__page-number" > 1 / 2 </span>
-    
-      <a class="older-posts pagination__older btn btn-small btn-tertiary" href="/categories/android/page/2/">更早 →</a>
-    
-  </nav>
 
  <script type="text/x-mathjax-config">
     MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>dex2oat对应用启动性能的影响 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="dex2oat对应用启动性能的影响 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="dex2oat对应用启动性能的影响 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/dex2oat对应用启动性能的影响/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">dex2oat对应用启动性能的影响</h1>
+  </header>
+
+  <section class="post">
+    <blockquote>
+<p>不可忘记用爱心接待客旅，因为曾有接待客旅的，不知不觉就接待了天使。—希伯来书13:2</p>
+</blockquote>
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>chrome应用冷启动缓慢，跟参考机相比在luncher界面点击chrome图标，有一个明显的延迟，然后chrome才被启动起来。从点击图标到第一个界面加载完全显示，问题机相对参考机要慢3s左右。</p>
+<h1 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h1><p>在<a href="http://blog.csdn.net/azhengye/article/details/67054941" target="_blank" rel="external"> Android 平台侧性能优化之应用启动</a> 一文里遇到过假冷启动引发的类似问题，按照这个思路检查排除了假冷启动的可能。<br>因为chrome都是通过play store跟新到最新版本v58.0.3029.83的。这也排除了chrome版本不同照成的因素。<br>参考机问题机的硬件参数有差异，问题机硬件是工程机的标准，而参考机是出货的硬件标准。这个可能存在影响，但直觉告诉我不应该有3s这么大的影响。</p>
+<h1 id="systrace分析"><a href="#systrace分析" class="headerlink" title="systrace分析"></a>systrace分析</h1><p>经过初步分析，该用systrace进一步深入分析。采用命令：</p>
+<blockquote>
+<p>./run_systrace.py -a com.android.chrome gfx input view am app dalvik sched freq idle load -o trace.html</p>
+</blockquote>
+<p>分别抓取参考机和问题机启动chrome的systrace。</p>
+<p>问题机启动chrome systrace如下:<br><img src="http://img.blog.csdn.net/20170610182646097?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="问题机systrace"></p>
+<p>参考机启动chrome systrace如下:<br><img src="http://img.blog.csdn.net/20170610182721894?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="参考机systrace"></p>
+<p>注意以上获取的systrace图，高亮的部分bindApplication问题机相对参考机多耗时1s以上，这个是非常不合理的。<br>放大高亮的bindApplication区域：<br><img src="http://img.blog.csdn.net/20170610182836762?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="bindApplication对比图"></p>
+<p>通过上图可以看到问题机OpenDexFilesFromOat方法把大部分时间都消耗在了打开base.apk，这个base.apk是未经过oat优化过的chrome apk，而参考机打开的是base.odex。怀疑问题机上系统对chrome未做oat优化。但oat优化是默认开启的啊，怎么在问题机上chrome没有生成对应的odex文件呢？</p>
+<p>为了进一步确认问题，我们需要去/data/app/com.android.chrome-1目录下查看到底有没有odex文件生成。坑爹的是user版本没有root权限查看不了，只能去单独烧录一个eng版本的bootimg了。<br>烧录eng的boot获取root权限查看/data/app/com.android.chrome-1竟然有base.odex，这遇到了什么鬼。。。<br>再次抓取此时问题机的systrace查看。<br><img src="http://img.blog.csdn.net/20170610182922107?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="烧录eng boot抓取systrace图"></p>
+<p>可以看到bindApplication由之前的1.888s变成现在的0.848s。已经靠近了参考机bindApplication花费的0.699s，如果再计算上eng boot对性能的影响，此时问题机bindApplication耗时应该很接近参考机了。</p>
+<h1 id="问题猜想"><a href="#问题猜想" class="headerlink" title="问题猜想"></a>问题猜想</h1><p>只是换了一个boot，不应该出现这种变化。有没有可能通过play store更新的chrome需要重启或者等待一段时间oat优化才会完成呢？因为更新完chrome后马上开始了问题分析，从之前的systrace看确实没有odex文件生成，而烧录eng boot后该odex文件就有了，eng boot应该不会影响odex文件的生成，烧录的过程重启了手机，重启过程很有可能左右该问题的主因。为了验证这个猜想，将参考机问题机的chrome都卸载更新的版本，重新通过play store 更新chrome，抓取systrace做对比参考。</p>
+<p>结果发现参考机更新完成后直接测试没有出现OpenDexFilesFromOat耗时过长问题。<br>在看问题机同样也没有出现OpenDexFilesFromOat耗时过长问题。</p>
+<p>卸载新版本，重新更新chrome，没有重启手机竟然没有出现启动异常。难道猜想错了，odex的生成压根与重启手机没有关系?这就有点费解了，跟预期的不一样啊，让人抓狂.</p>
+<p><center><br><img src="http://img.blog.csdn.net/20170610183026099?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></center></p>
+<center>
+
+<p>会不会是刚刷完机就复现问题，此时后台任务过多，导致chrome的oat操作没有完成呢？<br>会不会是JIT的问题呢？<br>会不会是虽然卸载掉了更新的apk，但某些地方还保留了记录，再次更新后，odex会自动生成呢?<br>在不成难道这是偶现问题？<br>满脑子的疑问飞过来，为了解决这些疑问，只有在刷机一次，从新做实验。</p>
+<p>刷完机更新完chrome后，为防止偶现问题，多次抓取了冷启动的systrace，都复现问题。<br><img src="http://img.blog.csdn.net/20170610183102297?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="二次确认"></p>
+<p>等待30分钟后，再次抓取systrace<br><img src="http://img.blog.csdn.net/20170610183126829?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="等待30分钟后"></p>
+<p>看来不是后台任务过多，导致chrome的oat操作没有完成。<br>多次使用chrome,在抓取systrace分析。同样还是有问题，这里图就不贴了。看来也不是JIT的问题。<br>在看重启手机后的现象,启动时间终于正常了。<br><img src="http://img.blog.csdn.net/20170610183159017?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="重启手机odex文件生成"></p>
+<p>终于找到了问题的表因，原来通过play store更新chrome应用，只有重启系统才会去做odex优化。而如果先卸载掉更新的chrome，在重新更新则没有问题。</p>
+<h1 id="刨根溯源"><a href="#刨根溯源" class="headerlink" title="刨根溯源"></a>刨根溯源</h1><p>问题原因找到了，那这个问题是play store的问题还是说系统本身的问题，无法完全确认，但猜测很可能是系统本身的问题，google 不会留下这么明显的bug。因此还需要追溯没有做odex的原因。<br>odex的详细过程这里不展开讲述。后续在单独起一篇做总结。先给出主要的调用关系。</p>
+<p><center><br><img src="http://img.blog.csdn.net/20170610183227256?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="dex2oat调用关系图"></center></p>
+<center>
+
+<p>沿着上图最终发现了问题所在。原来之前的同事在做开机优化时做了一个功能，将非重要应用的dex2oat操作放在了开机之后。可是没有考虑好更新应用时的逻辑处理，导致了问题的发生。本质原因找到了，那么该问题解起来就有方向了。这里涉及到具体的功能，不在赘述。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>程序员总爱给程序员挖坑，越向底层的改动越要小心，牵一发而动全身啊。<br>性能问题涉及的模块确实很多，许多问题总是那么的扑朔迷离，一定要有耐心去分析。<br>通过分析过程，我们也可以看到dex2oat对应用启动的性能确实提升巨大。systrace的好处就是能量化出这种性能差异。</p>
+</center></center>
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/IPC通信方式之LocalSocket/" title="IPC通信方式之LocalSocket">IPC通信方式之LocalSocket</a></h2>
+                <p class="excerpt">
+                
+                
+人生有八苦：生，老，病，死，爱别离，怨长久，求不得，放不下。
+
+LocalSocket是什么在弄清LocalSocket是什么之前，有必要先了解下Socket是什么。Socket通常翻译为套接字，它是为了方便让两台机器能互相通信的一套技术，该套技术封装好了繁琐的TCP/IP协议，向外提供出简单的A
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/IPC通信方式之LocalSocket/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android开机优化/" title="Android开机优化">Android开机优化</a></h2>
+                <p class="excerpt">
+                
+                问题描述开机时间相对参考机过慢，大约慢15s左右。Android 系统7.0。
+问题分析开机问题涉及的层次较多，大致有bootloader–&amp;gt;kernel–&amp;gt;Zygote–&amp;gt;PMS–&amp;gt;AMS–&amp;gt;Launcher可以借助bootchart来分析，也可以直接通过log分析。
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:14:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android开机优化/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

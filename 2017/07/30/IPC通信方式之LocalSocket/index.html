@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>IPC通信方式之LocalSocket | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="IPC通信方式之LocalSocket | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="IPC通信方式之LocalSocket | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/IPC通信方式之LocalSocket/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">IPC通信方式之LocalSocket</h1>
+  </header>
+
+  <section class="post">
+    <blockquote>
+<p>人生有八苦：生，老，病，死，爱别离，怨长久，求不得，放不下。</p>
+</blockquote>
+<h1 id="LocalSocket是什么"><a href="#LocalSocket是什么" class="headerlink" title="LocalSocket是什么"></a>LocalSocket是什么</h1><p>在弄清LocalSocket是什么之前，有必要先了解下Socket是什么。Socket通常翻译为套接字，它是为了方便让两台机器能互相通信的一套技术，该套技术封装好了繁琐的TCP/IP协议，向外提供出简单的API简化了通信实现的过程，其可以实现不同层面，不同应用，跨进程跨网络的通信。依据Socket提供的数据传输特性可分为如下几个大类：</p>
+<ul>
+<li>Stream socket: 提供双向、有序、可靠、非重复的数据通信。大致可以认为它封装的TCP通信协议。</li>
+<li>Datagram socket: 提供双向数据通信，数据不一定按顺序到达。大致可以认为它封装的是UDP通信协议。</li>
+<li>Sequential socket: 提供双向、有序、可靠数据通信，数据包有最大限制，并且必须把这个包完整的接受才能进行读取。</li>
+<li>Raw socket: 提供相对TCP/UDP而言较下层的通信协议访问，如果使用非TCP/UDP的通信协议可以使用该类型的socket。</li>
+</ul>
+<p>socket通信过程如下图<br><img src="http://img.blog.csdn.net/20170628195049343?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="socket通信过程示意图"></p>
+<p>而Android中的LocalSocket是基于UNIX-domain Socket的，UNIX-domain Socket是在Socket的基础上衍生出来的一种IPC通信机制，因此LocalSocket解决的是同一台主机上不同进程间互相通信的问题。其相对于网络通信使用的socket不需要经过网络协议栈，不需要打包拆包、计算校验，自然的执行效率也高。与大名鼎鼎的binder机制作用一样，都在Android系统中作为IPC通信手段被广泛使用。</p>
+<p>在去代码看看<br>frameworks/base/core/java/android/net/LocalSocket.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalSocket</span> <span class="keyword">implements</span> <span class="title">Closeable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LocalSocketImpl impl;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> implCreated;</div><div class="line">    <span class="keyword">private</span> LocalSocketAddress localAddress;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isBound;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isConnected;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> sockType;</div><div class="line"></div><div class="line">    <span class="comment">/** unknown socket type (used for constructor with existing file descriptor) */</span></div><div class="line">    <span class="comment">/* package */</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SOCKET_UNKNOWN = <span class="number">0</span>;</div><div class="line">    <span class="comment">/** Datagram socket type */</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SOCKET_DGRAM = <span class="number">1</span>;</div><div class="line">    <span class="comment">/** Stream socket type */</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SOCKET_STREAM = <span class="number">2</span>;</div><div class="line">    <span class="comment">/** Sequential packet socket type */</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SOCKET_SEQPACKET = <span class="number">3</span>;</div><div class="line">	<span class="comment">// ...</span></div></pre></td></tr></table></figure></p>
+<p>从上述代码片段引出了几个重要的相关类：</p>
+<ul>
+<li><p><strong>LocalSocketImpl:</strong> 如果看过JDK源码中的Socket模块，其中有一个SocketImpl类，客户端socket和服务端socket都是通过SocketImpl创建出来的。对比来看LocalSocketImpl的作用跟SocketImpl类似，不过这里还差一个服务端socket，查看LocalSocketImpl的类注释，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> Socket implementation used for android.net.LocalSocket and</div><div class="line"> android.net.LocalServerSocket. Supports only AF_LOCAL sockets.</div><div class="line"> */</div><div class="line"> <span class="class"><span class="keyword">class</span> <span class="title">LocalSocketImpl</span> </span>&#123;</div></pre></td></tr></table></figure>
+<p>类注释里清楚的阐述了LocalSocketImpl的作用，它是LocalSocket和LocalServerSocket的实现类，并且只支持AF_LOCAL类型的socket，而AF_LOCAL就是UNIX域的本地socket类型。这里又出现了一个重要类LocalServerSocket，它就是差的那个服务端socket.</p>
+</li>
+<li><p><strong>LocalServerSocket:</strong> 服务端的socket。</p>
+</li>
+<li><p><strong>LocalSocketAddress:</strong> AF_LOCAL类型socket的地址，做为LocalSocket和     LocalServerSocket互相通信的标示。这个标示可以放在三个不同的namespace下。具体如下<br> |ABSTRACT|linux 抽象命名空间|<br> |–|:–|<br> |RESERVED|Android系统预定的命名空间，其路径在/dev/socket下<br> |FILESYSTEM|传统的文件系统命名空间<br> Android系统可以通过命令</p>
+<blockquote>
+<p>adb shell netstat -apn</p>
+</blockquote>
+<p> 查看socket所处的命名空间，下图是本地截取的部分输出。<br> <img src="http://img.blog.csdn.net/20170628195139229?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="socket-地址空间"></p>
+</li>
+</ul>
+<h1 id="LocalSocket通信实例"><a href="#LocalSocket通信实例" class="headerlink" title="LocalSocket通信实例"></a>LocalSocket通信实例</h1><p>一般两个不同的应用之间如果要相互通信，首先想到的解决方案都是利用AIDL，这里我们用LocalSocket来实现。通过该例子来实践下LocalSocket。<br>先看看运行效果图。<br><img src="http://img.blog.csdn.net/20170705153906587?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYXpoZW5neWU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="LocalSocket实例"></p>
+<p>TestLocalSocketServer和TestLocalSocketClient是不同的两个应用，我们从TestLocalSocketClient输入一个字串，然后在TestLocalSocketServer显示出来。</p>
+<p><strong>TestLocalSocketServer核心代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> LocalServerSocket mServerSocket = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> LocalSocket mSocket = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> TextView mShowMsg = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> InputStream mInputStream = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SOCKET_NAME = <span class="string">"com.azhengye.testsocket"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"azhengye-Socket"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Handler mHandler = <span class="keyword">new</span> Handler() &#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(android.os.Message msg)</span> </span>&#123;</div><div class="line">            String dispMesg = (String) msg.obj;</div><div class="line">            mShowMsg.setText(dispMesg);</div><div class="line">        &#125;;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        Button button = (Button) findViewById(R.id.replay_btn);</div><div class="line">        mShowMsg = (TextView) findViewById(R.id.display_msg);</div><div class="line">        createServerSocket();<span class="comment">// 创建LocalServerSocket</span></div><div class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                acceptMsg();<span class="comment">//必须要在子线程里接收消息</span></div><div class="line">            &#125;</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createServerSocket</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mServerSocket == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="comment">/**注意这里new出LocalServerSocket的同时，系统层已经同步做了bind和listen。</span></div><div class="line">                 * 我们看看new的过程：</div><div class="line">                 * public LocalServerSocket(String name) throws IOException &#123;</div><div class="line">                 *       impl = new LocalSocketImpl();</div><div class="line">                 *       impl.create(LocalSocket.SOCKET_STREAM);</div><div class="line">                 *       localAddress = new LocalSocketAddress(name);</div><div class="line">                 *       impl.bind(localAddress);</div><div class="line">                 *       impl.listen(LISTEN_BACKLOG);</div><div class="line">                 * &#125;</div><div class="line">                 */</div><div class="line">                mServerSocket = <span class="keyword">new</span> LocalServerSocket(SOCKET_NAME);</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</div><div class="line">                        <span class="string">"Error binding to local socket "</span> + ex);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">acceptMsg</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mSocket = mServerSocket.accept();<span class="comment">//accept是个阻塞方法，这就是必须要在子线程接收消息的原因。</span></div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e1) &#123;</div><div class="line">            e1.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</div><div class="line">                mInputStream = mSocket.getInputStream();</div><div class="line">                <span class="keyword">int</span> count = mInputStream.read(buffer);</div><div class="line">                String key = <span class="keyword">new</span> String(Arrays.copyOfRange(buffer, <span class="number">0</span>, count));</div><div class="line">                Log.d(TAG, <span class="string">"ServerActivity mSocketOutStream=="</span> + key);</div><div class="line">                <span class="keyword">if</span> (<span class="string">"stop"</span>.equals(key)) &#123;</div><div class="line">                    closeSocketResource();</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">                &#125;</div><div class="line">                Message msg = mHandler.obtainMessage();</div><div class="line">                msg.obj = key;</div><div class="line">                msg.sendToTarget();</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                Log.d(TAG, <span class="string">"exception=="</span> + e.fillInStackTrace().getMessage());</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">closeSocketResource</span><span class="params">()</span> </span>&#123;</div><div class="line">        closeSlient(mInputStream);</div><div class="line">        closeSlient(mSocket);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">if</span> (mServerSocket != <span class="keyword">null</span>) &#123;</div><div class="line">                mServerSocket.close();</div><div class="line">                mServerSocket = <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">            Log.e(TAG, <span class="string">"Failed closing ServerSocket"</span> + ex.fillInStackTrace());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">closeSlient</span><span class="params">(Closeable closeable)</span></span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">if</span> (closeable != <span class="keyword">null</span>) &#123;</div><div class="line">                closeable.close();</div><div class="line">                closeable = <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">            Log.e(TAG, <span class="string">"Failed closing : "</span> + closeable);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>启动TestLocalSocketServer使用命令：</p>
+<blockquote>
+<p>adb shell netstat -apn|grep testsocket</p>
+</blockquote>
+<p>输出<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">unix  <span class="number">2</span>      [ ACC ]     STREAM     LISTENING       <span class="number">898034</span> <span class="number">12421</span>/com.example.te<span class="meta">@com</span>.azhengye.testsocket</div></pre></td></tr></table></figure></p>
+<p>则表明TestLocalSocketServer已经就绪，等待客户端socket接入发送消息了。</p>
+<p><strong>TestLocalSocketClient核心代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> <span class="keyword">implements</span> <span class="title">OnClickListener</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> LocalSocket mSocket;</div><div class="line">    <span class="keyword">private</span> OutputStream mOut;</div><div class="line">    <span class="keyword">private</span> EditText mEditText = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SOCKET_NAME = <span class="string">"com.azhengye.testsocket"</span>;<span class="comment">//这里必须要跟TestLocalSocketServer中定义的一样</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"azhengye-Socket"</span>;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        connect();</div><div class="line">        mEditText = (EditText) findViewById(R.id.input_msg);</div><div class="line">        findViewById(R.id.replay_btn).setOnClickListener(<span class="keyword">this</span>);</div><div class="line">        findViewById(R.id.stop_btn).setOnClickListener(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">connect</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mSocket != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mSocket = <span class="keyword">new</span> LocalSocket();<span class="comment">//创建LocalSocket，模拟客户端</span></div><div class="line">            LocalSocketAddress address = <span class="keyword">new</span> LocalSocketAddress(SOCKET_NAME,</div><div class="line">                    LocalSocketAddress.Namespace.ABSTRACT);</div><div class="line">            mSocket.connect(address);<span class="comment">//连接TestLocalSocketServer</span></div><div class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">writeCommand</span><span class="params">(String cmdString)</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> <span class="keyword">byte</span>[] cmd = cmdString.getBytes();</div><div class="line">        <span class="keyword">final</span> <span class="keyword">int</span> len = cmd.length;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mOut = mSocket.getOutputStream();</div><div class="line">            mOut.write(cmd, <span class="number">0</span>, len);</div><div class="line">            Log.i(TAG, <span class="string">"ClientActivity write "</span> + <span class="keyword">new</span> String(cmd));</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">            Log.e(TAG, <span class="string">"ClientActivity write error:"</span> + ex.fillInStackTrace());</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (v.getId()) &#123;</div><div class="line">            <span class="keyword">case</span> R.id.replay_btn:</div><div class="line">                writeCommand(mEditText.getText().toString());</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> R.id.stop_btn:</div><div class="line">                writeCommand(<span class="string">"stop"</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">default</span>:</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>启动TestLocalSocketClient使用命令：</p>
+<blockquote>
+<p>adb shell netstat -apn|grep testsocket</p>
+</blockquote>
+<p>输出<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">unix  <span class="number">3</span>      [ ]         STREAM     CONNECTED       <span class="number">902376</span> <span class="number">12421</span>/com.example.te<span class="meta">@com</span>.azhengye.testsocket</div></pre></td></tr></table></figure></p>
+<p>则表明TestLocalSocketClient已经连接上了TestLocalSocketServer，可以给TestLocalSocketServer发送消息了。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-Battery视图界面分析/" title="Android-Battery视图界面分析">Android-Battery视图界面分析</a></h2>
+                <p class="excerpt">
+                
+                
+每一个不曾起舞的日子，都是对生命的辜负。—–尼采
+
+最近关注功耗问题，顺便看了下Settings模块中Battery界面。这块的UI还是写的挺不错的，在此分享下。
+Battery界面分析下图是我在看该界面时，脑中的一些疑惑点。上图列出的三大块疑问，正是引起我好奇心的地方。先来一个一个说下当初自己想
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-Battery视图界面分析/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/dex2oat对应用启动性能的影响/" title="dex2oat对应用启动性能的影响">dex2oat对应用启动性能的影响</a></h2>
+                <p class="excerpt">
+                
+                
+不可忘记用爱心接待客旅，因为曾有接待客旅的，不知不觉就接待了天使。—希伯来书13:2
+
+问题描述chrome应用冷启动缓慢，跟参考机相比在luncher界面点击chrome图标，有一个明显的延迟，然后chrome才被启动起来。从点击图标到第一个界面加载完全显示，问题机相对参考机要慢3s左右。
+初步
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/dex2oat对应用启动性能的影响/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

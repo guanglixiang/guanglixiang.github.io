@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android开机优化 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android开机优化 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android开机优化 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/Android开机优化/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:14:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android开机优化</h1>
+  </header>
+
+  <section class="post">
+    <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>开机时间相对参考机过慢，大约慢15s左右。Android 系统7.0。</p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>开机问题涉及的层次较多，大致有bootloader–&gt;kernel–&gt;Zygote–&gt;PMS–&gt;AMS–&gt;Launcher<br>可以借助bootchart来分析，也可以直接通过log分析。不幸的是本项目机器因未知原因导致无法抓取到bootchart。<br>幸好在我浏览源码时发现了一个神器perfboot工具。具体在system/core/init/perfboot.py。<br>运行该命令需要在源码编译环境下。详细请参考源码文件，此处不做过多介绍。<br>使用命令：<br><code>./perfboot.py --iterations=5 --interval=30 -v --output=boot_time.tsv</code><br>获取问题机与参考机的开机数据。生成下图</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-4de291f1499ae0fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="参考机vs问题机"><br>上图X轴是开机启动过程中的一些重要节点。Y轴是开机时间。<br>详细说明下X轴上各个节点表征的含义。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">boot_progress_start</th>
+<th>系统进入用户空间，标志着kernel启动完成，本例中可以看出kernel启动耗时30s左右</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">boot_progress_preload_start</td>
+<td>Zygote启动</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_preload_end</td>
+<td>Zygote结束</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_system_run</td>
+<td>SystemServer ready,开始启动Android系统服务，如PMS，APMS等</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_pms_start</td>
+<td>PMS开始扫描安装的应用</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_pms_system_scan_start</td>
+<td>PMS先行扫描/system目录下的安装包</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_pms_data_scan_start</td>
+<td>PMS扫描/data目录下的安装包</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_pms_scan_end</td>
+<td>PMS扫描结束</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_pms_ready</td>
+<td>PMS就绪</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_ams_ready</td>
+<td>AMS就绪</td>
+</tr>
+<tr>
+<td style="text-align:left">boot_progress_enable_screen</td>
+<td>AMS启动完成后开始激活屏幕，从此以后屏幕才能响应用户的触摸，它在WindowManagerService发出退出开机动画的时间节点之前，而真正退出开机动画还会花费少许时间，具体依赖animation zip 包中的desc.txt。wm_boot_animation_done才是用户感知到的动画结束时间节点</td>
+</tr>
+<tr>
+<td style="text-align:left">sf_stop_bootanim</td>
+<td>SF设置service.bootanim.exit属性值为1，标志系统要结束开机动画了，可以用来跟踪开机动画结尾部分消耗的时间</td>
+</tr>
+<tr>
+<td style="text-align:left">wm_boot_animation_done</td>
+<td>开机动画结束，这一步用户能直观感受到开机结束</td>
+</tr>
+</tbody>
+</table>
+<p>通过上图可以直观的看到问题机在进入boot_progress_start节点之前相对参考机耗时较多。而这之前主要涉及bootloader和kernel。</p>
+<h2 id="bootloader-优化"><a href="#bootloader-优化" class="headerlink" title="bootloader 优化"></a>bootloader 优化</h2><p>这一块没有接触过，交给底层同事优化。大概说下抓取log的方式.</p>
+<blockquote>
+<p>adb shell cat /proc/bootmsg &gt; bootmsg.txt.</p>
+</blockquote>
+<p>从log里底层同事发现是bootimg签名有问题，更详细的分析，自己对这块真心不懂，总结不出帮助性的意见。</p>
+<h2 id="kernel层优化"><a href="#kernel层优化" class="headerlink" title="kernel层优化"></a>kernel层优化</h2><p>kernel的优化先check一遍config的配置，kernel中config的配置种类繁多，就算是工作几年的kernel工程师也不一定能清楚每一个config值的作用。Android提供了一个基础配置表。<br>可以用脚本：kernel/scripts/kconfig/merge_config.sh来生成一份config文件。具体用法<a href="https://source.android.com/devices/tech/config/kernel" target="_blank" rel="external">戳这</a><br>拿生成的config文件和当前项目中的config做对比，同时也对比参考机的config文件。对比的时候可以用一个现成的工具kernel/scripts/diffconfig来比较。<br>综合比较后的结果，本地一点点调试，查找资料。最终去掉了如下config：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">CONFIG_MTD_TESTS=m ----&gt; m改为n</div><div class="line">CONFIG_SERIAL_MSM_HSL=y ----&gt; y改为n</div><div class="line">CONFIG_SERIAL_MSM_HSL_CONSOLE=y ----&gt; y改为n</div><div class="line">CONFIG_MMC_BLOCK_TEST=m ----&gt;注释掉</div><div class="line">CONFIG_MMC_TEST=m ----&gt;注释掉</div><div class="line">CONFIG_SERIAL_MSM_HSL=y ----&gt; y改为n</div><div class="line">CONFIG_SERIAL_MSM_HSL_CONSOLE=y ----&gt; y改为n</div><div class="line">CONFIG_MSM_SMD_DEBUG=y ----&gt;注释掉</div><div class="line">CONFIG_CGROUP_DEBUG=y ----&gt;注释掉</div><div class="line">CONFIG_RELAY=y ----&gt;注释掉</div><div class="line">CONFIG_RMNET_DATA_DEBUG_PKT=y ----&gt;注释掉</div><div class="line">CONFIG_DEBUG_GPIO=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_EVENT=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_FUSE=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_CTI=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_TMC=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_TPIU=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_FUNNEL=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_REPLICATOR=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_STM=y ----&gt;注释掉</div><div class="line">CONFIG_CORESIGHT_HWEVENT=y ----&gt;注释掉</div><div class="line">CONFIG_DEBUG_MEMORY_INIT=y ----&gt;注释掉</div><div class="line">CONFIG_DYNAMIC_DEBUG=y ----&gt;注释掉</div><div class="line">//以下也全部注释掉</div><div class="line">CONFIG_SCHED_DEBUG</div><div class="line">CONFIG_DEBUG_KMEMLEAK</div><div class="line">CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=400</div><div class="line">CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF</div><div class="line">CONFIG_DEBUG_SPINLOCK</div><div class="line">CONFIG_DEBUG_MUTEXES</div><div class="line">CONFIG_DEBUG_ATOMIC_SLEEP</div><div class="line">CONFIG_DEBUG_STACK_USAGE</div><div class="line">CONFIG_DEBUG_LIST</div><div class="line">CONFIG_FAULT_INJECTION_DEBUG_FS</div><div class="line">CONFIG_LOCKUP_DETECTOR</div><div class="line">CONFIG_DEBUG_PAGEALLOC</div><div class="line">CONFIG_PAGE_POISONING</div><div class="line">CONFIG_RMNET_DATA_DEBUG_PKT</div><div class="line">CONFIG_MMC_PERF_PROFILING</div><div class="line">CONFIG_DEBUG_BUS_VOTER</div><div class="line">CONFIG_SLUB_DEBUG</div><div class="line">CONFIG_DEBUG_BUGVERBOSE</div><div class="line">CONFIG_ALLOC_BUFFERS_IN_4K_CHUNK</div><div class="line">CONFIG_SERIAL_CORE</div><div class="line">CONFIG_SERIAL_CORE_CONSOLE</div><div class="line">CONFIG_SERIAL_MSM_HSL</div><div class="line">CONFIG_SERIAL_MSM_HSL_CONSOLE</div><div class="line">CONFIG_MSM_TZ_LOG</div><div class="line">CONFIG_DYNAMIC_DEBUG</div></pre></td></tr></table></figure></p>
+<p>这里说下config的配置有y,n,m，m表示编译成模块，不编译进内核。不配置的话相当于n。<br>CONFIG_DEBUG_INFO 不能去掉， 会引起CTS不过。由于config的的各项值可能散落在kernel的不同文件中，我们可以单独编译下kernel，然后去out目录下查看obj/KERNEL_OBJ/.config 文件，这里面的配置项是完全的。</p>
+<p>kernel关闭掉一些debug开关后。在新版本上复测结果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2912789-d4f374458c1f83c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="优化lk和kernel后"></p>
+<blockquote>
+<p>这里提下如何看kernel的log，<br>开机后用命令：adb shell dmesg &gt; dmesg.txt抓取Log<br>log里面搜关键字”Bootloader start count”–&gt;LK 启动<br>“Bootloader end count”–&gt;LK 结束<br>“Kernel MPM timestamp”–&gt;bootloader运行完成</p>
+</blockquote>
+<p>通过对bootloader和kernel的优化，直接减少了14s左右的开机时间，可以看到优化的效果还是比较明显的。</p>
+<h2 id="frameworks层优化"><a href="#frameworks层优化" class="headerlink" title="frameworks层优化"></a>frameworks层优化</h2><p>用命令: <code>adb logcat -b events|grep boot</code>我们过滤出启动阶段的主要事件。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">52.139</span>   <span class="number">391</span>   <span class="number">391</span> I boot_progress_start: <span class="number">15452</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">53.329</span>   <span class="number">391</span>   <span class="number">391</span> I boot_progress_preload_start: <span class="number">16641</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">56.675</span>   <span class="number">391</span>   <span class="number">391</span> I boot_progress_preload_end: <span class="number">19989</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">57.020</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_system_run: <span class="number">20333</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">57.824</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_pms_start: <span class="number">21137</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">38</span>:<span class="number">58.865</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_pms_system_scan_start: <span class="number">22179</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">08.852</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_pms_data_scan_start: <span class="number">32166</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">08.907</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_pms_scan_end: <span class="number">32221</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">10.109</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_pms_ready: <span class="number">33422</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">12.557</span>  <span class="number">1729</span>  <span class="number">1729</span> I boot_progress_ams_ready: <span class="number">35871</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">15.189</span>  <span class="number">1729</span>  <span class="number">1782</span> I boot_progress_enable_screen: <span class="number">38503</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">17.973</span>   <span class="number">290</span>   <span class="number">321</span> I sf_stop_bootanim: <span class="number">41287</span></div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">18.887</span>  <span class="number">1729</span>  <span class="number">1961</span> I wm_boot_animation_done: <span class="number">42201</span></div></pre></td></tr></table></figure></p>
+<p>结合对比图看，boot_progress_enable_screen之前问题机跟对比机各个节点耗时相差不大。在这里说明下，Android M上启动阶段到boot_progress_enable_screen就结束了，而Android N上还多了sf_stop_bootanim和wm_boot_animation_done两个事件。这也就是图-优化kernel后棕红色的线条到boot_progress_enable_screen就没有延生的原因，因为它表示的参考机，而参考机正好是Android M系统。<br>从log的时间戳可以看出:<br>boot_progress_enable_screen—&gt;花费2s左右的时间到达sf_stop_bootanim—&gt;花费1s多时间到达wm_boot_animation_done。多出来的两个过程总共多花接近4s的时间。<br>我们要重点看下这个过程发生了什么，为什么会多出来这近4s时间。</p>
+<p>1.先看下boot_progress_enable_screen出现的位置。<br>它在frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">enableScreenAfterBoot</span><span class="params">()</span> </span>&#123;</div><div class="line">    EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_ENABLE_SCREEN,</div><div class="line">            SystemClock.uptimeMillis());</div><div class="line">    mWindowManager.enableScreenAfterBoot();</div><div class="line"></div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">        updateEventDispatchingLocked();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2.sf_stop_bootanim出现的位置。<br>它在frameworks/native/services/surfaceflinger/SurfaceFlinger_hwc1.cpp。<br>这里特别说明下SurfaceFlinger_hwc1.cpp是SurfaceFlinger.cpp的升级版，它支持HWC 2.0，使用的是SurfaceFlinger.cpp还是SurfaceFlinger_hwc1.cpp跟平台选择相关。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> SurfaceFlinger::bootFinished()</div><div class="line">&#123;</div><div class="line">	...</div><div class="line">	<span class="comment">// stop boot animation</span></div><div class="line">    <span class="comment">// formerly we would just kill the process, but we now ask it to exit so it</span></div><div class="line">    <span class="comment">// can choose where to stop the animation.</span></div><div class="line">    property_set(<span class="string">"service.bootanim.exit"</span>, <span class="string">"1"</span>);</div><div class="line">    <span class="keyword">const</span> <span class="keyword">int</span> LOGTAG_SF_STOP_BOOTANIM = <span class="number">60110</span>;</div><div class="line">    LOG_EVENT_LONG(LOGTAG_SF_STOP_BOOTANIM,</div><div class="line">                   ns2ms(systemTime(SYSTEM_TIME_MONOTONIC)));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>3.wm_boot_animation_done出现的位置。<br>frameworks/base/services/core/java/com/android/server/wm/WindowManagerService.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performEnableScreen</span><span class="params">()</span> </span>&#123;</div><div class="line">	...</div><div class="line">	<span class="comment">// Don't enable the screen until all existing windows have been drawn.</span></div><div class="line">	<span class="keyword">if</span> (!mForceDisplayEnabled &amp;&amp; checkWaitingForWindowsLocked()) &#123;</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (!mBootAnimationStopped) &#123;</div><div class="line">		<span class="comment">// Do this one time.</span></div><div class="line">		Trace.asyncTraceBegin(Trace.TRACE_TAG_WINDOW_MANAGER, <span class="string">"Stop bootanim"</span>, <span class="number">0</span>);</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			IBinder surfaceFlinger = ServiceManager.getService(<span class="string">"SurfaceFlinger"</span>);</div><div class="line">			<span class="keyword">if</span> (surfaceFlinger != <span class="keyword">null</span>) &#123;</div><div class="line">				<span class="comment">//Slog.i(TAG_WM, "******* TELLING SURFACE FLINGER WE ARE BOOTED!");</span></div><div class="line">				Parcel data = Parcel.obtain();</div><div class="line">				data.writeInterfaceToken(<span class="string">"android.ui.ISurfaceComposer"</span>);</div><div class="line">				surfaceFlinger.transact(IBinder.FIRST_CALL_TRANSACTION, <span class="comment">// BOOT_FINISHED</span></div><div class="line">						data, <span class="keyword">null</span>, <span class="number">0</span>);</div><div class="line">				data.recycle();</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">catch</span> (RemoteException ex) &#123;</div><div class="line">			Slog.e(TAG_WM, <span class="string">"Boot completed: SurfaceFlinger is dead!"</span>);</div><div class="line">		&#125;</div><div class="line">		mBootAnimationStopped = <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">	<span class="keyword">if</span> (!mForceDisplayEnabled &amp;&amp; !checkBootAnimationCompleteLocked()) &#123;</div><div class="line">		<span class="keyword">if</span> (DEBUG_BOOT) Slog.i(TAG_WM, <span class="string">"performEnableScreen: Waiting for anim complete"</span>);</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">	...</div><div class="line">    EventLog.writeEvent(EventLogTags.WM_BOOT_ANIMATION_DONE, SystemClock.uptimeMillis());</div><div class="line">	...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>找到了3个节点出现的位置，现在再来分析如何将这3个节点串联起来。<br>1–&gt;2过程： AMS的enableScreenAfterBoot调用WMS的enableScreenAfterBoot方法，在WMS中的enableScreenAfterBoot会继续调用内部方法performEnableScreen，该方法内部判断开机动画如果没有停止，就调用SurfaceFlinger去停止开机动画<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">surfaceFlinger.transact(IBinder.FIRST_CALL_TRANSACTION, <span class="comment">// BOOT_FINISHED</span></div><div class="line">                                data, null, <span class="number">0</span>);</div></pre></td></tr></table></figure></p>
+<p>这里的FIRST_CALL_TRANSACTION实际上就是BOOT_FINISHED。<br>frameworks/native/include/gui/ISurfaceComposer.h<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> BnSurfaceComposer: <span class="keyword">public</span> BnInterface&lt;ISurfaceComposer&gt; &#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">    <span class="keyword">enum</span> &#123;</div><div class="line">        <span class="comment">// Note: BOOT_FINISHED must remain this value, it is called from</span></div><div class="line">        <span class="comment">// Java by ActivityManagerService.</span></div><div class="line">        BOOT_FINISHED = IBinder::FIRST_CALL_TRANSACTION,</div></pre></td></tr></table></figure></p>
+<p>surfaceFlinger.transact发出的调用请求会被ISurfaceComposer处理。<br>frameworks/native/libs/gui/ISurfaceComposer.cpp<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">status_t</span> BnSurfaceComposer::onTransact(</div><div class="line">    <span class="keyword">uint32_t</span> code, <span class="keyword">const</span> Parcel&amp; data, Parcel* reply, <span class="keyword">uint32_t</span> flags)</div><div class="line">&#123;</div><div class="line">    ...</div><div class="line">    <span class="keyword">switch</span>(code) &#123;</div><div class="line">		<span class="keyword">case</span> BOOT_FINISHED: &#123;</div><div class="line">				CHECK_INTERFACE(ISurfaceComposer, data, reply);</div><div class="line">				bootFinished();</div><div class="line">				<span class="keyword">return</span> NO_ERROR;</div><div class="line">			&#125;</div><div class="line">	&#125;</div><div class="line">	...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里的bootFinished就是SurfaceFlinger_hwc1.cpp定义的bootFinished()方法，最终来到了第2个节点sf_stop_bootanim。<br>为了验证上述调用过程，我们添加上打印调用栈的log看看输出。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> SurfaceFlinger::bootFinished()</div><div class="line">&#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">nsecs_t</span> now = systemTime();</div><div class="line">    <span class="keyword">const</span> <span class="keyword">nsecs_t</span> duration = now - mBootTime;</div><div class="line">    ALOGI(<span class="string">"Boot is finished (%ld ms)"</span>, <span class="keyword">long</span>(ns2ms(duration)) );</div><div class="line">    mBootFinished = <span class="literal">true</span>;</div><div class="line">    android::CallStack <span class="built_in">stack</span>;</div><div class="line">	<span class="built_in">stack</span>.update();</div><div class="line">	<span class="built_in">stack</span>.<span class="built_in">log</span>(<span class="string">"azhengye"</span>, ANDROID_LOG_DEBUG, <span class="string">" "</span>);</div><div class="line">	String8 strtemp = <span class="built_in">stack</span>.toString(<span class="string">""</span>);</div><div class="line">	ALOGD(<span class="string">"Sunny\t%s"</span>, strtemp.<span class="built_in">string</span>());</div><div class="line">&#125;</div><div class="line">---------------------------------------------------------------------------------</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.978</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">00</span> pc <span class="number">0002b</span>761  /system/lib/libsurfaceflinger.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.978</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">01</span> pc <span class="number">00045</span>c9f  /system/lib/libgui.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.978</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">02</span> pc <span class="number">000310</span>cf  /system/lib/libsurfaceflinger.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.978</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">03</span> pc <span class="number">000359b</span>3  /system/lib/libbinder.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">04</span> pc <span class="number">0003</span>d159  /system/lib/libbinder.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">05</span> pc <span class="number">0003</span>cdb7  /system/lib/libbinder.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">06</span> pc <span class="number">0003</span>d2bb  /system/lib/libbinder.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">07</span> pc <span class="number">0004f</span>5f5  /system/lib/libbinder.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">08</span> pc <span class="number">0000e349</span>  /system/lib/libutils.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">09</span> pc <span class="number">000473</span>d3  /system/lib/libc.so</div><div class="line"><span class="number">04</span><span class="number">-28</span> <span class="number">12</span>:<span class="number">41</span>:<span class="number">15.979</span>   <span class="number">308</span>  <span class="number">2956</span> D azhengye:  #<span class="number">10</span> pc <span class="number">0001</span>a0c9  /system/lib/libc.so</div><div class="line">---------------------------------------------------------------------------------</div><div class="line">SurfaceFlinger_hwc1.cpp:<span class="number">312</span>   android::SurfaceFlinger::bootFinished()</div><div class="line">ISurfaceComposer.cpp:<span class="number">371</span>      android::BnSurfaceComposer::onTransact(<span class="keyword">unsigned</span> <span class="keyword">int</span>, android::Parcel <span class="keyword">const</span>&amp;, android::Parcel*, <span class="keyword">unsigned</span> <span class="keyword">int</span>)</div><div class="line">SurfaceFlinger_hwc1.cpp:<span class="number">3103</span>  android::SurfaceFlinger::onTransact(<span class="keyword">unsigned</span> <span class="keyword">int</span>, android::Parcel <span class="keyword">const</span>&amp;, android::Parcel*, <span class="keyword">unsigned</span> <span class="keyword">int</span>)</div><div class="line">Binder.cpp:<span class="number">126</span>                android::BBinder::transact(<span class="keyword">unsigned</span> <span class="keyword">int</span>, android::Parcel <span class="keyword">const</span>&amp;, android::Parcel*, <span class="keyword">unsigned</span> <span class="keyword">int</span>)</div><div class="line">IPCThreadState.cpp:<span class="number">1111</span>       android::IPCThreadState::executeCommand(<span class="keyword">int</span>)</div><div class="line">IPCThreadState.cpp:<span class="number">445</span>        android::IPCThreadState::getAndExecuteCommand()</div><div class="line">IPCThreadState.cpp:<span class="number">513</span>        android::IPCThreadState::joinThreadPool(<span class="keyword">bool</span>)</div><div class="line">ProcessState.cpp:<span class="number">63</span> (discriminator <span class="number">1</span>)android::PoolThread::threadLoop()</div><div class="line">Threads.cpp:<span class="number">751</span>               android::Thread::_threadLoop(<span class="keyword">void</span>*)</div><div class="line">pthread_create.cpp:<span class="number">198</span> (discriminator <span class="number">1</span>)__pthread_start(<span class="keyword">void</span>*)</div><div class="line">clone.cpp:<span class="number">41</span> (discriminator <span class="number">1</span>)__start_thread</div></pre></td></tr></table></figure>
+<p>上述log也印证了之前的分析，至此1–&gt;2的过程算是通了。在来看2–&gt;3过程，在3节点出现之前还有一次判断：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!mForceDisplayEnabled &amp;&amp; !checkBootAnimationCompleteLocked()) &#123;</div><div class="line">                <span class="keyword">if</span> (DEBUG_BOOT) Slog.i(TAG_WM, <span class="string">"performEnableScreen: Waiting for anim complete"</span>);</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里系统需要去检测开机动画是否还在播放，<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> boolean <span class="title">checkBootAnimationCompleteLocked</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span> (SystemService.isRunning(BOOT_ANIMATION_SERVICE)) &#123;</div><div class="line">		mH.removeMessages(H.CHECK_IF_BOOT_ANIMATION_FINISHED);</div><div class="line">		mH.sendEmptyMessageDelayed(H.CHECK_IF_BOOT_ANIMATION_FINISHED,</div><div class="line">				BOOT_ANIMATION_POLL_INTERVAL);</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>BOOT_ANIMATION_SERVICE是在初始化SurfaceFlinger时启动的。<br>frameworks/native/services/surfaceflinger/SurfaceFlinger_hwc1.cpp<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> SurfaceFlinger::init() &#123;</div><div class="line">    ...</div><div class="line">	<span class="comment">// start boot animation</span></div><div class="line">    startBootAnim();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>顺藤摸瓜来到了BootAnimation，前面分析过在SurfaceFlinger的bootFinished方法中将”service.bootanim.exit”置为了1，这个设置在BootAnimation就被读取了。<br>frameworks/base/cmds/bootanimation/BootAnimation.cpp<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> EXIT_PROP_NAME <span class="meta-string">"service.bootanim.exit"</span></span></div><div class="line">...</div><div class="line"><span class="keyword">void</span> BootAnimation::checkExit() &#123;</div><div class="line">    <span class="comment">// Allow surface flinger to gracefully request shutdown</span></div><div class="line">    <span class="keyword">char</span> value[PROPERTY_VALUE_MAX];</div><div class="line">    property_get(EXIT_PROP_NAME, value, <span class="string">"0"</span>);</div><div class="line">    <span class="keyword">int</span> exitnow = atoi(value);</div><div class="line">    <span class="keyword">if</span> (exitnow) &#123;</div><div class="line">        requestExit();</div><div class="line">        <span class="keyword">if</span> (mAudioPlayer != <span class="literal">NULL</span>) &#123;</div><div class="line">            mAudioPlayer-&gt;requestExit();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>跟踪到这2–&gt;3过程也就通畅了。在理清了该过程的调用逻辑后，问题也浮出了水面。原来之前的同事在解决一个开机进桌面出现黑屏问题时，在checkExit内部人为delay了几秒的时间…</p>
+<p>在排查log时还发现下面的错误：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">15</span>:<span class="number">55</span>:<span class="number">23.506</span>  <span class="number">1865</span>  <span class="number">1865</span> E BitmapFactory: Unable to decode stream: java.io.FileNotFoundException: /data/system/users/<span class="number">0</span>/wallpaper_orig (No such file or directory)</div></pre></td></tr></table></figure></p>
+<p>adb shell 进入手机发现确实没有/data/system/users/0/wallpaper_orig文件。<br>会不会是是wallpaper异常导致消耗时间多余呢?<br>为了清晰debug在过滤下log</p>
+<blockquote>
+<p>adb logcat -b all|grep -E “Wallpaper may change|haveWall|sf_stop_bootanim|boot_progress_enable_screen”</p>
+</blockquote>
+<p>输出如下log：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">01-02 12:13:03.814  1851  2082 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:04.865  1851  2082 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:06.986  1851  2006 I boot_progress_enable_screen: 40388</div><div class="line">01-02 12:13:06.988  1851  2082 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:07.052  1851  2006 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:07.056  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:07.184  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:08.049  1851  2082 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:08.066  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:08.067  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:08.071  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:08.072  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:08.076  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=false wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:09.894  1851  2082 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:09.908  1851  3413 V WindowManager: Wallpaper may change!  Adjusting</div><div class="line">01-02 12:13:10.178  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=true wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:10.186   292  3736 I sf_stop_bootanim: 43587</div><div class="line">01-02 12:13:10.191  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=true wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:10.196  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=true wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:10.397  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=true wallEnabled=true haveKeyguard=true</div></pre></td></tr></table></figure></p>
+<p>然后在做实验push一个wallpaper_orig到指定目录，BitmapFactory的错误虽然不见了。然而对于缩短时间并没有什么卵用。<br>看来不是这个异常没有拖慢开机速度。但我注意到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">01-02 12:13:10.178  1851  2082 I WindowManager: ******** booted=true msg=false haveBoot=false haveApp=false haveWall=true wallEnabled=true haveKeyguard=true</div><div class="line">01-02 12:13:10.186   292  3736 I sf_stop_bootanim: 43587</div></pre></td></tr></table></figure></p>
+<p>这段log中haveWall=true之前一直都是haveWall=false,haveWall表示系统Window已经成功加载好了Wallpaper。Log中不断的输出<br>WindowManager: Wallpaper may change!  Adjusting<br>这里究竟为什么Wallpaper会不断的Adjusting呢?看起来一旦Wallpaper调整好就会将haveWall置true。<br>追踪了下该句log在代码中的位置：<br>frameworks/base/services/core/java/com/android/server/wm/WindowManagerService.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkWaitingForWindowsLocked</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">//省略无关代码</span></div><div class="line"></div><div class="line">        <span class="keyword">if</span> (DEBUG_SCREEN_ON || DEBUG_BOOT) &#123;</div><div class="line">            Slog.i(TAG_WM, <span class="string">"******** booted="</span> + mSystemBooted + <span class="string">" msg="</span> + mShowingBootMessages</div><div class="line">                    + <span class="string">" haveBoot="</span> + haveBootMsg + <span class="string">" haveApp="</span> + haveApp</div><div class="line">                    + <span class="string">" haveWall="</span> + haveWallpaper + <span class="string">" wallEnabled="</span> + wallpaperEnabled</div><div class="line">                    + <span class="string">" haveKeyguard="</span> + haveKeyguard);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// If we are turning on the screen to show the boot message,</span></div><div class="line">        <span class="comment">// don't do it until the boot message is actually displayed.</span></div><div class="line">        <span class="keyword">if</span> (!mSystemBooted &amp;&amp; !haveBootMsg) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// If we are turning on the screen after the boot is completed</span></div><div class="line">        <span class="comment">// normally, don't do so until we have the application and</span></div><div class="line">        <span class="comment">// wallpaper.</span></div><div class="line">        <span class="keyword">if</span> (mSystemBooted &amp;&amp; ((!haveApp &amp;&amp; !haveKeyguard) ||</div><div class="line">                (wallpaperEnabled &amp;&amp; !haveWallpaper))) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>这个checkWaitingForWindowsLocked表示是否需要等待系统Windows就绪。被同在WindowManagerService类中的performEnableScreen方法调用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performEnableScreen</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// Don't enable the screen until all existing windows have been drawn.</span></div><div class="line">        <span class="keyword">if</span> (!mForceDisplayEnabled &amp;&amp; checkWaitingForWindowsLocked()) &#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>从注释看performEnableScreen执行的是激活屏幕动作，然而在此之前需要等待系统必要的windows已经被画好了，也就是说我屏幕一旦激活了，绘制好的windows就能马上显示出来。否则performEnableScreen直接就退出了。<br>而performEnableScreen又是被同在WindowManagerService类中enableScreenAfterBoot方法调用。大致的调用过程如下：<br>AMS打印出boot_progress_enable_screen—-&gt;调用WMS的enableScreenAfterBoot—&gt;调用WMS的performEnableScreen—&gt;调用WMS的checkWaitingForWindowsLocked检查是否可以Enable Screen，因为Wallpaper没有准备好，因此checkWaitingForWindowsLocked返回了true，进而导致performEnableScreen直接返回，没有去执行本来要做的Enable Screen动作。</p>
+<p>WindowManager: Wallpaper may change!  Adjusting<br>是在下面的code打印出来的。<br>frameworks/base/services/core/java/com/android/server/wm/WindowSurfacePlacer.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// "Something has changed!  Let's make it correct now."</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">performSurfacePlacementInner</span><span class="params">(<span class="keyword">boolean</span> recoveringMemory)</span> </span>&#123;</div><div class="line">    	<span class="comment">//省略无关代码</span></div><div class="line">        <span class="keyword">if</span> (mWallpaperMayChange) &#123;</div><div class="line">            <span class="keyword">if</span> (DEBUG_WALLPAPER_LIGHT)</div><div class="line">                Slog.v(TAG, <span class="string">"Wallpaper may change!  Adjusting"</span>);</div><div class="line">            defaultDisplay.pendingLayoutChanges |= FINISH_LAYOUT_REDO_WALLPAPER;</div><div class="line">            <span class="keyword">if</span> (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats(<span class="string">"WallpaperMayChange"</span>,</div><div class="line">                    defaultDisplay.pendingLayoutChanges);</div><div class="line">        &#125;</div><div class="line">       <span class="comment">//省略无关代码</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>debug调用栈如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.572</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: java.lang.Exception: print stack</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.573</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at com.android.server.wm.WindowManagerService.checkWaitingForWindowsLocked(WindowManagerService.java:<span class="number">5841</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.574</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at com.android.server.wm.WindowManagerService.performEnableScreen(WindowManagerService.java:<span class="number">5905</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.575</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at com.android.server.wm.WindowManagerService$H.handleMessage(WindowManagerService.java:<span class="number">8390</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.576</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at android.os.Handler.dispatchMessage(Handler.java:<span class="number">102</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.577</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at android.os.Looper.loop(Looper.java:<span class="number">154</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.578</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at android.os.HandlerThread.run(HandlerThread.java:<span class="number">61</span>)</div><div class="line"><span class="number">01</span>-<span class="number">01</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">30.578</span>  <span class="number">2912</span>  <span class="number">2962</span> W System.err: 	at com.android.server.ServiceThread.run(ServiceThread.java:<span class="number">46</span>)</div></pre></td></tr></table></figure></p>
+<p>这块没有检查出多余的操作，没继续check了。<br>经过以上分析后修改代码，最终问题机的开机速度达到了参考机的标准。性能问题是一个持续挖掘改善的过程，开机过程中还能优化的地方肯定还有。</p>
+<h1 id="debug-技术说明"><a href="#debug-技术说明" class="headerlink" title="debug 技术说明"></a>debug 技术说明</h1><p>汇总下分析该问题时，汇集的一些debug技术。</p>
+<ul>
+<li><p>java代码中打印堆栈 Slog.d(“azhengye”, “Stack==”+new RuntimeException(“azhengye debug”).fillInStackTrace());<br>或者new Exception(“print stack”).printStackTrace(); 然后log中搜索”System.err:”</p>
+</li>
+<li><p>c++ debug: 为了在native查看函数调用栈可以在需要的地方添加如下代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utils/CallStack.h&gt;</span></span></div><div class="line">android::CallStack <span class="built_in">stack</span>;</div><div class="line"><span class="built_in">stack</span>.update();</div><div class="line">android::String8 strtemp = <span class="built_in">stack</span>.toString(<span class="string">""</span>);</div><div class="line">ALOGD(<span class="string">"\t%s"</span>, strtemp.<span class="built_in">string</span>());</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>过滤出的log还需要用arm-linux-androideabi-addr2line转行下，好在有现成的脚本帮我们做这件事，这里一并贴出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python  </span></div><div class="line"><span class="comment"># stack symbol parser  </span></div><div class="line">  </div><div class="line"><span class="keyword">import</span> os  </div><div class="line"><span class="keyword">import</span> string  </div><div class="line"><span class="keyword">import</span> sys  </div><div class="line">  </div><div class="line">ANDROID_TARGET_OUT = os.getcwd()+<span class="string">"/"</span>  </div><div class="line">  </div><div class="line"><span class="comment"># addr2line tool path and symbol path  </span></div><div class="line">addr2line_tool = <span class="string">'arm-linux-androideabi-addr2line'</span>  </div><div class="line">symbol_dir = ANDROID_TARGET_OUT + <span class="string">'/symbols'</span>  </div><div class="line">symbol_bin = symbol_dir + <span class="string">'/system/bin/'</span>  </div><div class="line">symbol_lib = symbol_dir + <span class="string">'/system/lib/'</span>  </div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ReadLog</span>:</span>  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,filename)</span>:</span>  </div><div class="line">        self.logname = filename  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self)</span>:</span>  </div><div class="line">        f = file(self.logname,<span class="string">'r'</span>)  </div><div class="line">        lines = f.readlines()  </div><div class="line">        <span class="keyword">if</span> lines != []:  </div><div class="line">            <span class="keyword">print</span> <span class="string">'read file ok'</span>  </div><div class="line">        <span class="keyword">else</span>:  </div><div class="line">            <span class="keyword">print</span> <span class="string">'read file failed'</span>  </div><div class="line">        result =[]  </div><div class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> lines:  </div><div class="line">            <span class="keyword">if</span> line.find(<span class="string">'stack'</span>) != <span class="number">-1</span>:  </div><div class="line">                <span class="keyword">print</span> <span class="string">'stop search'</span>  </div><div class="line">                <span class="keyword">break</span>  </div><div class="line">            <span class="keyword">elif</span> line.find(<span class="string">'system'</span>) != <span class="number">-1</span>:  </div><div class="line">                <span class="comment">#print 'find one item' + line  </span></div><div class="line">                result.append(line)  </div><div class="line">        <span class="keyword">return</span> result  </div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ParseContent</span>:</span>  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,addr,lib)</span>:</span>  </div><div class="line">            self.address = addr <span class="comment"># pc address  </span></div><div class="line">            self.exename = lib  <span class="comment"># executable or shared library  </span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addr2line</span><span class="params">(self)</span>:</span>  </div><div class="line">        cmd = addr2line_tool + <span class="string">" -C -f -s -e "</span> + symbol_dir + self.exename + <span class="string">" "</span> + self.address  </div><div class="line">        <span class="comment">#print cmd  </span></div><div class="line">        stream = os.popen(cmd)  </div><div class="line">        lines = stream.readlines();  </div><div class="line">        list = map(string.strip,lines)  </div><div class="line">        <span class="keyword">return</span> list  </div><div class="line">      </div><div class="line">inputarg = sys.argv  </div><div class="line"><span class="keyword">if</span> len(inputarg) &lt; <span class="number">2</span>:  </div><div class="line">    <span class="keyword">print</span> <span class="string">'Please input panic log'</span>  </div><div class="line">    exit()  </div><div class="line">  </div><div class="line">filename = inputarg[<span class="number">1</span>]  </div><div class="line">readlog = ReadLog(filename)  </div><div class="line">inputlist = readlog.parse()  </div><div class="line">  </div><div class="line"><span class="keyword">for</span> item <span class="keyword">in</span> inputlist:  </div><div class="line">    itemsplit = item.split()  </div><div class="line">    test = ParseContent(itemsplit[<span class="number">-2</span>],itemsplit[<span class="number">-1</span>])  </div><div class="line">    list = test.addr2line()  </div><div class="line">    <span class="keyword">print</span> <span class="string">"%-30s%s"</span> % (list[<span class="number">1</span>],list[<span class="number">0</span>])</div></pre></td></tr></table></figure>
+<p>在源码编译的imge文件夹下执行上面的脚本，调试 SF 的bootFinished就用的该脚本，下面是个输出例子。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #00 pc 000059b9  /system/bin/bootanimation</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #01 pc 00006515  /system/bin/bootanimation</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #02 pc 0000591f  /system/bin/bootanimation</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #03 pc 000054f1  /system/bin/bootanimation</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #04 pc 0000e349  /system/lib/libutils.so</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #05 pc 000473d3  /system/lib/libc.so</div><div class="line">01-02 01:38:13.305   477  3072 D azhengye   :   #06 pc 0001a0c9  /system/lib/libc.so</div><div class="line">------------------------------------------------------------------------------------</div><div class="line">python panic.py /data/My_Doc/Performance/boot_c_log </div><div class="line">read file ok</div><div class="line">BootAnimation.cpp:534         android::BootAnimation::checkExit()</div><div class="line">BootAnimation.cpp:972         android::BootAnimation::playAnimation(android::BootAnimation::Animation const&amp;)</div><div class="line">BootAnimation.cpp:870         android::BootAnimation::movie()</div><div class="line">BootAnimation.cpp:452         android::BootAnimation::threadLoop()</div><div class="line">Threads.cpp:751               android::Thread::_threadLoop(void*)</div><div class="line">pthread_create.cpp:198 (discriminator 1)__pthread_start(void*)</div><div class="line">clone.cpp:41 (discriminator 1)__start_thread</div></pre></td></tr></table></figure></p>
+<ul>
+<li>堆栈dump<blockquote>
+<p>adb shell kill -3 <pid> </pid></p>
+</blockquote>
+</li>
+</ul>
+<p>输出的trace会保存在 /data/anr/traces.txt文件中。这个需要注意，如果没有 /data/anr/这个目录    或/data/anr/traces.txt这个文件，需要手工创建一下，并设置好读写权限。如果是native thread的堆栈打印，可能需要修改dalvik/vm/Thread.cpp的dumpNativeThread方法。</p>
+<ul>
+<li>debuggerd  coredump 这个是开始分析问题查资料找到的debug方法，不过自己没有实践，仅作记录参考。<br>debuggerd是android的一个daemon进程，负责在进程异常出错时，将进程的运行时信息dump出来供分析。debuggerd生成的coredump数据是以文本形式呈现，被保存在 /data/tombstone/ 目录下，它可以在不中断进程执行的情况下打印当前进程的native堆栈。使用方法是:<blockquote>
+<p>debuggerd -b <pid></pid></p>
+</blockquote>
+</li>
+</ul>
+<p>这可以协助我们分析进程执行行为，也可以用来定位native进程中锁死或错误逻辑引起的死循环的代码位置。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>各家厂商都会定制不同的开机行为，因此没有一个固定的方法能fix所有的开机问题，但通过本文我们总结分析该类问题的套路，那就是关注boot阶段的各个event事件，先量化出开机慢在哪里，然后在去针对性的优化。<br>源码真的是个宝库，多读吧。</p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/dex2oat对应用启动性能的影响/" title="dex2oat对应用启动性能的影响">dex2oat对应用启动性能的影响</a></h2>
+                <p class="excerpt">
+                
+                
+不可忘记用爱心接待客旅，因为曾有接待客旅的，不知不觉就接待了天使。—希伯来书13:2
+
+问题描述chrome应用冷启动缓慢，跟参考机相比在luncher界面点击chrome图标，有一个明显的延迟，然后chrome才被启动起来。从点击图标到第一个界面加载完全显示，问题机相对参考机要慢3s左右。
+初步
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/dex2oat对应用启动性能的影响/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/04/19/Email加载邮件详情慢-未解决/" title="Email加载邮件详情慢-未解决">Email加载邮件详情慢-未解决</a></h2>
+                <p class="excerpt">
+                
+                问题描述打开Emial主界面，点击打开一封邮件，待邮件详情完全加载出来结束。这个过程相对参考机慢300ms左右.问题机Email版本:versionName=v5.2.10.3.0214.0参考机Email版本:versionName=v7.0.4.1.0312.0_0228
+问题分析硬件对比
+cp
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-04-19T13:35:08.000Z" class="post-list__meta--date date">2017-04-19</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+</span><a class="btn-border-small" href="/2017/04/19/Email加载邮件详情慢-未解决/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

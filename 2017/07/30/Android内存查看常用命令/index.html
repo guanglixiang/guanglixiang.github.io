@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Android内存查看常用命令 | Sunny的四度空间</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="技术成就更好的自我">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Android内存查看常用命令 | Sunny的四度空间">
+    <meta name="twitter:description" content="技术成就更好的自我">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android内存查看常用命令 | Sunny的四度空间">
+    <meta property="og:description" content="技术成就更好的自我">
+
+    
+    <meta name="author" content="Sunny">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://yoursite.com/2017/07/30/Android内存查看常用命令/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Sunny的四度空间 的主页"><img src="/images/myicon.jpg" width="80" alt="Sunny的四度空间 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Sunny的四度空间">Sunny的四度空间</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">talk is cheap</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/guanglixiang?tab=repositories" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android-Performance/">Android-Performance</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Android内存查看常用命令</h1>
+  </header>
+
+  <section class="post">
+    <blockquote>
+<p>事情的终局强如事情的起头；存心忍耐的，胜过居心骄傲的。—传道书7:8</p>
+</blockquote>
+<p>RAM(random-access memory)即内存的使用情况对系统的性能影响很大，OOM问题、内存泄露、程序卡顿等诸多问题，都跟不合理的内存使用相关，并且这类问题一般都比较隐晦，要解决该类问题，熟悉内存查看的方法很有必要。<br>本篇博文介绍Android平台上常用的内存观测方法。</p>
+<h1 id="procrank与procmem"><a href="#procrank与procmem" class="headerlink" title="procrank与procmem"></a>procrank与procmem</h1><p>这两个命令均需要root权限才能运行。<br><strong>procrank</strong><br>procrank可以快速的总览当前系统各个进程的内存使用情况，其主要展示了4个指标：</p>
+<ul>
+<li>Vss(virtual set size): 进程可访问的内存大小，包含了共享内存。Android系统中大量的内存空间会被多个进程共享，比如一个进程在运行期间会调用到其他进程，那么Vss也就将调用到的其它进程的内存统计进来了。</li>
+<li>Rss(resident set size): 进程实际使用的内存大小，同样也包含了共享内存，但它只将实际用到的共享内存统计入内。</li>
+<li>Pss(proportional set size): 进程自身内存大小+按比例分配的共享内存大小。</li>
+<li>Uss(unique set size): 进程自身的内存大小，不包括使用到的其他共享内存。程序退出后，系统就会多出Uss大小的内存出来。</li>
+</ul>
+<p>举个例子说明下：假如有进程A，其自身运行期间的私有内存大小为a，进程B运行期间占据了b大小的内存。<br>A运行期间需要依赖B，则Vss=a+b。<br>A依赖B，但只是用到了B进程下的部分内存区域，大小为b1。则Rss=a+b1(b1&lt;=b)<br>除了A以外，还有3个进程也同样在使用B，则Pss=a+b/(1+3)<br>只统计A进程自身占用的内存，则Uss=a</p>
+<p>procrank的使用说明<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"># procrank -h</div><div class="line">Usage: procrank [ -W ] [ -v | -r | -p | -u | -s | -h ]</div><div class="line">    -v  Sort by VSS.</div><div class="line">    -r  Sort by RSS.</div><div class="line">    -p  Sort by PSS.</div><div class="line">    -u  Sort by USS.</div><div class="line">    -s  Sort by swap.</div><div class="line">        (Default sort order is PSS.)</div><div class="line">    -R  Reverse sort order (default is descending).</div><div class="line">    -c  Only show cached (storage backed) pages</div><div class="line">    -C  Only show non-cached (ram/swap backed) pages</div><div class="line">    -k  Only show pages collapsed by KSM</div><div class="line">    -w  Display statistics for working set only.</div><div class="line">    -W  Reset working set of all processes.</div><div class="line">    -h  Display this help screen.</div></pre></td></tr></table></figure></p>
+<p>其运行结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">  PID       Vss      Rss      Pss      Uss    cmdline</div><div class="line"> 3062  1735540K  131548K   85448K   78648K    system_server</div><div class="line"> 3428  1028392K  115896K   74462K   68900K    com.android.systemui</div><div class="line">26426  1012992K   83272K   42890K   39664K    com.android.settings</div><div class="line"> 3806  1001248K   81064K   41639K   38840K    com.android.phone</div><div class="line">  353   152208K   40524K   28086K   26516K    /system/bin/cameraserver</div><div class="line"> 3414   978800K   64344K   27342K   25120K    com.google.android.inputmethod.pinyin</div><div class="line"> 9885  1643528K   64880K   24821K   22012K    com.android.mms</div></pre></td></tr></table></figure></p>
+<p><strong>分析内存问题主要关注的是Uss跟Pss，尤其是Uss.因为Vss和Rss包含了共享内存，单个进程分析内存大小时，会有干扰。</strong></p>
+<p>由于procrank会列出整个系统进程的内存信息，而更多时候我们往往只关心特定进程的内存信息。可以用下面的shell语句过滤出我们关心的内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">while true;do adb shell procrank|grep &lt;proc-keywords&gt;; sleep 6;done</div></pre></td></tr></table></figure>
+<p>上述命令会每隔6s打印出关心的进程内存信息。</p>
+<p><strong>procmem</strong><br>procrank命令从宏观上给出了进程的内存总体情况，但如果需要详细分析某个进程的内存分配细节，这个时候就需要procmem出场了。<br>procmem使用说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"># procmem</div><div class="line">Usage: procmem [ -w | -W ] [ -p | -m ] [ -h ] pid</div><div class="line">    -w  Displays statistics for the working set only.</div><div class="line">    -W  Resets the working set of the process.</div><div class="line">    -p  Sort by PSS.</div><div class="line">    -m  Sort by mapping order (as read from /proc).</div><div class="line">    -h  Hide maps with no RSS.</div></pre></td></tr></table></figure></p>
+<p>比如我们查看settings应用的内存分布：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># procmem -m 26426 (26426为settings的pid)</div><div class="line">    Vss      Rss      Pss      Uss     ShCl     ShDi     PrCl     PrDi  Name</div><div class="line">-------  -------  -------  -------  -------  -------  -------  -------  </div><div class="line">  2084K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/dalvik-main space (deleted)</div><div class="line">194524K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/dalvik-main space (deleted)</div><div class="line"> 12560K   10492K   10492K   10492K       0K       0K   10488K       4K  /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">  1780K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">182268K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">  7436K    7436K    4277K    4172K    3264K       0K    4172K       0K  /data/dalvik-cache/arm/system@framework@boot.art</div><div class="line"> 31116K   15260K    1696K     124K   15136K       0K     124K       0K  /data/dalvik-cache/arm/system@framework@boot.oat</div><div class="line">     4K       4K       0K       0K       4K       0K       0K       0K  /data/dalvik-cache/arm/system@framework@boot.oat</div><div class="line">	      0K       0K       0K       0K       0K       0K       0K       0K  [vectors]</div><div class="line">-------  -------  -------  -------  -------  -------  -------  -------  </div><div class="line">1130688K  148940K  108346K  104332K   44512K      96K   62100K   42452K  TOTAL</div></pre></td></tr></table></figure></p>
+<p>中间大量的输出结果省略。</p>
+<p>从procmem输出的结果可以看到它给出了内存是如何分配的细节，但面对这茫茫多的输出数据，我们该如何从中寻找问题点呢？</p>
+<p><strong>内存异常问题往往伴随着内存泄露，而内存泄露的本质就是申请的内存区域得不到正常释放，表现在procmem的输出结果就是多条同名的记录出现。因此如果发现procmem输出的结果里某条记录出现次数过多，比如五六百次，那么我们应当小心对待了。</strong></p>
+<h1 id="dumpsys-meminfo"><a href="#dumpsys-meminfo" class="headerlink" title="dumpsys meminfo"></a>dumpsys meminfo</h1><p><code>dumpsys meminfo</code> 也是分析内存的一把利器，如果不跟进程名或者进程号，则输出系统整体的内存情况，跟进程名则输出该进程的内存分配情况。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"># adb shell dumpsys meminfo 26426</div><div class="line">Applications Memory Usage (in Kilobytes):</div><div class="line">Uptime: 206814437 Realtime: 374715375</div><div class="line"></div><div class="line">** MEMINFO in pid 26426 [com.android.settings] **</div><div class="line">                   Pss  Private  Private     Swap     Heap     Heap     Heap</div><div class="line">                 Total    Dirty    Clean    Dirty     Size    Alloc     Free</div><div class="line">                ------   ------   ------   ------   ------   ------   ------</div><div class="line">  Native Heap    32062    32016        0        0    67584    27961    39622</div><div class="line">  Dalvik Heap     9623     9504        0        0    21384     9096    12288</div><div class="line"> Dalvik Other     4857     4824        0        0                           </div><div class="line">        Stack      404      404        0        0                           </div><div class="line">       Ashmem        2        0        0        0                           </div><div class="line">      Gfx dev    40220    40220        0        0                           </div><div class="line">    Other dev        6        0        4        0                           </div><div class="line">     .so mmap     1258      184       16        0                           </div><div class="line">    .jar mmap        8        8        0        0                           </div><div class="line">    .apk mmap      865        0      392        0                           </div><div class="line">    .ttf mmap       63        0        8        0                           </div><div class="line">    .dex mmap     6464        8     6456        0                           </div><div class="line">    .oat mmap     1694        0      124        0                           </div><div class="line">    .art mmap     4280     4172        0        0                           </div><div class="line">   Other mmap      563        4      156        0                           </div><div class="line">   EGL mtrack    13056    13056        0        0                           </div><div class="line">      Unknown      601      600        0        0                           </div><div class="line">        TOTAL   116026   105000     7156        0    88968    37057    51910</div><div class="line"> </div><div class="line"> App Summary</div><div class="line">                       Pss(KB)</div><div class="line">                        ------</div><div class="line">           Java Heap:    13676</div><div class="line">         Native Heap:    32016</div><div class="line">                Code:     7196</div><div class="line">               Stack:      404</div><div class="line">            Graphics:    53276</div><div class="line">       Private Other:     5588</div><div class="line">              System:     3870</div><div class="line"> </div><div class="line">               TOTAL:   116026      TOTAL SWAP (KB):        0</div><div class="line"> </div><div class="line"> Objects</div><div class="line">               Views:      985         ViewRootImpl:        3</div><div class="line">         AppContexts:       11           Activities:        7</div><div class="line">              Assets:        5        AssetManagers:        4</div><div class="line">       Local Binders:       83        Proxy Binders:       40</div><div class="line">       Parcel memory:      389         Parcel count:       26</div><div class="line">    Death Recipients:        0      OpenSSL Sockets:        0</div><div class="line">            WebViews:        0</div><div class="line"> </div><div class="line"> SQL</div><div class="line">         MEMORY_USED:      339</div><div class="line">  PAGECACHE_OVERFLOW:      178          MALLOC_SIZE:      117</div><div class="line"> </div><div class="line"> DATABASES</div><div class="line">      pgsz     dbsz   Lookaside(b)          cache  Dbname</div><div class="line">         4      228             95      469/191/4  /data/user_de/0/com.android.settings/databases/search_index.db</div></pre></td></tr></table></figure></p>
+<p>横轴的几个重要参数：</p>
+<ul>
+<li>Pss Total:按比例分配占用内存 (PSS) 总量,与procrank里的Pss含义一样。</li>
+<li>Private Dirty: 进程私有的内存分配量，当进程退出，将有 Private Dirty大小的内存被系统回收。Private Dirty是已被修改而必须保持在 RAM 中的 RAM 页，相对应的Private Clean指RAM已从某个持久性文件（例如正在执行的代码）映射的 RAM 页，如果一段时间不用，可以移出分页。</li>
+<li>Heap Size:进程当前可访问到的堆内存大小，包含了共享的其他进程内存。</li>
+<li>Heap Alloc:进程当前已经占有的堆内存大小。</li>
+</ul>
+<p>纵轴的几个重要参数：</p>
+<ul>
+<li>Unknown：系统无法将其分类到其他更具体的一个项中的内存，当Unknown指持续增大，且不会明显回落，很可能是native的内存泄漏了。</li>
+<li>AppContexts &amp; Activities：进程中当前活动的应用 Context 和 Activity 对象数量，它们不断增长则表示有内存泄漏。</li>
+</ul>
+<h1 id="proc节点下隐藏的内存信息"><a href="#proc节点下隐藏的内存信息" class="headerlink" title="proc节点下隐藏的内存信息"></a>proc节点下隐藏的内存信息</h1><p>/proc/[pid]节点下的内容包含了该进程更为详细的信息。不过查看它需要root权限。事实上不光内存信息，有关该进程的各种信息基本都能在该节点下找到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># cd /proc/26426</div><div class="line"># ls</div><div class="line">attr   clear_refs coredump_filter exe    limits       maps      mounts     ns        oom_score_adj reclaim   sessionid stat   syscall </div><div class="line">auxv   cmdline    cwd             fd     loginuid     mem       mountstats oom_adj   pagemap       root      smaps     statm  task    </div><div class="line">cgroup comm       environ         fdinfo make-it-fail mountinfo net        oom_score personality   schedstat stack     status wchan</div></pre></td></tr></table></figure>
+<p>以上展现了进程26426的相关信息,它们都被记录在对应的文件节点上。分析内存问题主要看maps节点，它会记录26426进程的详细内存映射关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"># cat maps |head </div><div class="line">12c00000-12e09000 ---p 00000000 00:04 12528      /dev/ashmem/dalvik-main space (deleted)</div><div class="line">12e09000-1ec00000 ---p 00209000 00:04 12528      /dev/ashmem/dalvik-main space (deleted)</div><div class="line">32c00000-33844000 rw-p 00000000 00:04 12529      /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">33844000-33a01000 ---p 00c44000 00:04 12529      /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">33a01000-3ec00000 rw-p 00e01000 00:04 12529      /dev/ashmem/dalvik-main space 1 (deleted)</div><div class="line">70e4b000-7158e000 rw-p 00000000 103:0c 497764    /data/dalvik-cache/arm/system@framework@boot.art</div><div class="line">7158e000-733f1000 r--p 00000000 103:0c 497763    /data/dalvik-cache/arm/system@framework@boot.oat</div><div class="line">733f1000-733f2000 r-xp 01e63000 103:0c 497763    /data/dalvik-cache/arm/system@framework@boot.oat</div><div class="line">733f2000-733f3000 r--p 01e64000 103:0c 497763    /data/dalvik-cache/arm/system@framework@boot.oat</div><div class="line">733f3000-733f4000 rw-p 01e65000 103:0c 497763    /data/dalvik-cache/arm/system@framework@boot.oat</div></pre></td></tr></table></figure>
+<p>procmem获取到的信息就跟maps节点记录的一样，maps更加详细的标示出了内存分配的起至位置。</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="http://stevevallay.github.io/blog/2014/11/17/memory-leak/" target="_blank" rel="external">http://stevevallay.github.io/blog/2014/11/17/memory-leak/</a><br><a href="https://androidzhibinw.github.io/android/app/startup/activity/%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/%E5%90%AF%E5%8A%A8/%E5%88%86%E6%9E%90/2015/09/21/android-app-startup-process/" target="_blank" rel="external">https://androidzhibinw.github.io/android/app/startup/activity/%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/%E5%90%AF%E5%8A%A8/%E5%88%86%E6%9E%90/2015/09/21/android-app-startup-process/</a><br><a href="http://shooting.logdown.com/posts/318965-android-memory-allocation" target="_blank" rel="external">http://shooting.logdown.com/posts/318965-android-memory-allocation</a><br><a href="https://developer.android.com/studio/profile/investigate-ram.html?hl=zh-cn" target="_blank" rel="external">https://developer.android.com/studio/profile/investigate-ram.html?hl=zh-cn</a></p>
+
+  </section>
+
+</article>
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/" title="Android-battery-historian功耗分析之环境搭建">Android-battery-historian功耗分析之环境搭建</a></h2>
+                <p class="excerpt">
+                
+                
+凡事谦虚、温柔、忍耐、用爱心互相宽容，用平和彼此联络，竭力保守圣灵所赐合而为一的心。—-以弗所书4:2-3
+
+battery historian 是什么battery historian是用go语言开发的一个电池耗电分析工具，Android 5.0以后的版本可以使用它。其官方文档地址https:/
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-battery-historian功耗分析之环境搭建/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2017/07/30/Android-Battery视图界面分析/" title="Android-Battery视图界面分析">Android-Battery视图界面分析</a></h2>
+                <p class="excerpt">
+                
+                
+每一个不曾起舞的日子，都是对生命的辜负。—–尼采
+
+最近关注功耗问题，顺便看了下Settings模块中Battery界面。这块的UI还是写的挺不错的，在此分享下。
+Battery界面分析下图是我在看该界面时，脑中的一些疑惑点。上图列出的三大块疑问，正是引起我好奇心的地方。先来一个一个说下当初自己想
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2017-07-30T15:26:08.000Z" class="post-list__meta--date date">2017-07-30</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/Android基础/">Android基础</a>
+</span><a class="btn-border-small" href="/2017/07/30/Android-Battery视图界面分析/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+            
+<section class="youyan" id="comments">
+  <div id="uyan_frame"></div>
+  <script src="http://v2.uyan.cc/code/uyan.js?uid=2130380"></script>
+</section>
+
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2017 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+    
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
